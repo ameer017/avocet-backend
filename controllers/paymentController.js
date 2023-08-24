@@ -1,40 +1,50 @@
 const axios = require('axios');
 
-const FLUTTERWAVE_SECRET_KEY = 'FLWPUBK_TEST-491e470d88ecdd5c5e237a79979a758f-X';
+const KORAPAY_SECRET_KEY = 'sk_test_ZCET4wATw3msqjyL9snbP8PAKbSr5auo5EYmfAWn'; 
 
-const initiatePayment = async (req, res) => {
-  try {
-    const { amount, email, orderId } = req.body;
+// POST /api/payment/request
+// Request payment for sellers
+const requestPayment = async (req, res) => {
 
-    // Make a request to Flutterwave API to initiate payment
-    const response = await axios.post(
-      'https://api.flutterwave.com/v3/charges?type=mobilemoneyghana',
-      {
-        tx_ref: orderId,
-        amount,
-        currency: 'NGN', // Use NGN for Nigerian Naira
-        redirect_url: 'http://localhost:5173', // Replace with your actual success URL
-        payment_type: 'accountdebit', // Use accountdebit for Nigerian payments
-        order_id: orderId,
-        customer: {
-          email,
-        },
+  const {name, email, amount} = req.body;
+
+  const data = {
+    reference: `payment-${Date.now()}`,
+    destination: {
+      type: "bank_account",
+      amount,
+      currency: "NGN",
+      narration: "Test Transfer Payment",
+      bank_account: {
+        bank: "033",
+        account: "0000000000"
       },
-      {
-        headers: {
-          Authorization: `Bearer ${FLUTTERWAVE_SECRET_KEY}`,
-        },
+      customer: {
+        name,
+        email
       }
-    );
+    }
+  };
 
-    const paymentLink = response.data.data.link;
+  var config = {
+    method: 'post',
+  maxBodyLength: Infinity,
+    url: 'https://api.korapay.com/merchant/api/v1/transactions/disburse',
+    headers: { 
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${KORAPAY_SECRET_KEY}`,
+    },
+    data : data
+  };
 
-    res.status(200).json({ paymentLink });
-  } catch (error) {
-    console.error('Error initiating payment:', error);
-    res.status(500).json({ error: 'An error occurred while initiating payment' });
-  }
+  axios(config)
+  .then(function (response) {
+    console.log(JSON.stringify(response.data));
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+
 };
 
-
-module.exports = { initiatePayment };
+module.exports = requestPayment;

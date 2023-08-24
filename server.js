@@ -8,6 +8,7 @@ const userRoute = require("./routes/userRoute");
 const plasticRoutes = require("./routes/plasticRoutes")
 const paymentRoute = require("./routes/paymentRoute")
 const errorHandler = require("./middleware/errorMiddleware");
+const path = require("path");
 
 const app = express();
 
