@@ -1,0 +1,25 @@
+const express = require("express");
+const { 
+    getOrders, 
+    deleteOrder, 
+    getOrder, 
+    upgradeOrder, 
+    updateOrder, 
+    confirmOrder, 
+    createOrder
+} = require("../controllers/plasticController");
+
+const { protect, authorOnly } = require("../middleware/authMiddleware");
+const router = express.Router();
+
+router.post("/create", protect, createOrder);
+router.post("/confirm", protect, authorOnly, confirmOrder);
+router.get("/getOrder", protect, getOrder);
+router.get("/getOrders", protect, getOrders);
+router.patch("/updateOrder", protect, updateOrder);
+
+router.delete("/:id", protect, deleteOrder);
+router.post("/upgradeOrder", protect, authorOnly, upgradeOrder);
+
+
+module.exports = router;
