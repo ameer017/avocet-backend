@@ -20,8 +20,8 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 
 app.use(cors({
-  origin: 'http://localhost:5173', // Replace with your frontend's origin
-  credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+  origin: ["http://localhost:5173", "https://avocet-solutions.vercel.app"],
+  credentials: true, 
 }));
 
 // Routes
