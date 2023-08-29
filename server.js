@@ -7,6 +7,7 @@ const cookieParser = require("cookie-parser");
 const userRoute = require("./routes/userRoute");
 const plasticRoutes = require("./routes/plasticRoutes")
 const paymentRoute = require("./routes/paymentRoute")
+const kycRoute = require("./routes/kycRoute")
 const errorHandler = require("./middleware/errorMiddleware");
 const path = require("path");
 
@@ -18,17 +19,16 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(bodyParser.json());
 
-app.use(
-  cors({
-    origin: ["http://localhost:5173", "https://avocet-waste-solutions.vercel.app"],
-    credentials: true,
-  })
-);
+app.use(cors({
+  origin: 'http://localhost:5173', // Replace with your frontend's origin
+  credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+}));
 
 // Routes
 app.use("/api/users", userRoute);
 app.use("/api/order", plasticRoutes);
 app.use("/api/payment", paymentRoute);
+app.use("/api/verify", kycRoute);
 
 app.get("/", (req, res) => {
   res.send("Home Page");

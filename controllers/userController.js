@@ -10,7 +10,6 @@ const crypto = require("crypto");
 const Cryptr = require("cryptr");
 const { OAuth2Client } = require("google-auth-library");
 const Plastic = require("../models/plasticModel");
-const stripe = require('stripe')(process.env.STRIPE_KEY); 
 
 
 const cryptr = new Cryptr(process.env.CRYPTR_KEY);
