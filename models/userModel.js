@@ -7,14 +7,6 @@ const userSchema = mongoose.Schema(
       type: String,
       required: [true, "Please add a name"],
     },
-    account_Num: {
-      type: String,
-      required: [true, "Please add an account Number"],
-    },
-    bank: {
-      type: String,
-      required: [true, "Please add your bank name"],
-    },
     email: {
       type: String,
       required: [true, "Please add an email"],
@@ -56,7 +48,6 @@ const userSchema = mongoose.Schema(
       required: true,
       default: [],
     },
-    stripeAccountId: { type: String }, // New field for Stripe account ID
 
   },
   {

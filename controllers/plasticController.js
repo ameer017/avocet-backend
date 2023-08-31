@@ -7,7 +7,7 @@ const sendEmailToCollector = require("../utils/sendEmailToCollector");
 
 // create order
 const createOrder = asyncHandler(async (req, res) => {
-  const { user, type, weight, address, amount, phone, sellerEmail } = req.body
+  const { user, type, weight, address, amount, phone, sellerEmail, account_num, bank } = req.body
 
   // validation
   if(!type || !phone ) {
@@ -25,7 +25,7 @@ const createOrder = asyncHandler(async (req, res) => {
 
   // create new order
   const plastic = await Plastic.create({
-    type, weight, address, amount, phone, sellerEmail
+    type, weight, address, amount, phone, sellerEmail, account_num, bank
   })
   
 
@@ -49,7 +49,7 @@ const createOrder = asyncHandler(async (req, res) => {
   }
 
   if (plastic) {
-    const { type, weight, address, amount, phone, sellerEmail, status } = plastic;
+    const { type, weight, address, amount, phone, sellerEmail, status, account_num, bank } = plastic;
 
     // Step 3: Send email to the selected collector
     sendEmailToCollector(
@@ -59,7 +59,9 @@ const createOrder = asyncHandler(async (req, res) => {
       address,
       amount,
       phone,
-      status,
+      status, 
+      account_num, 
+      bank,
       sellerEmail
     );
 
@@ -142,7 +144,7 @@ const getOrder = asyncHandler(async (req, res) => {
     const plastic = await Plastic.findOne(req.params.name);
   
     if (plastic) {
-      const { _id, name, phone, type, amount, status, weight, sellerEmail } = plastic;
+      const { _id, name, phone, type, amount, status, weight, sellerEmail, account_num, bank } = plastic;
   
       res.status(200).json({
         _id,
@@ -152,7 +154,9 @@ const getOrder = asyncHandler(async (req, res) => {
         weight,
         amount,
         status,
-        sellerEmail
+        sellerEmail, 
+        account_num, 
+        bank
       });
     } else {
       res.status(404);
@@ -212,7 +216,7 @@ const updateOrder = asyncHandler(async (req, res) => {
     const plastic = await Plastic.findOne(req.params.name);
   
     if (plastic) {
-      const { name, type, weight, phone, status} = plastic;
+      const { name, type, weight, phone, status, account_num, bank} = plastic;
   
       plastic.type = req.body.type || type;
       plastic.name = req.body.name || name;
@@ -229,6 +233,8 @@ const updateOrder = asyncHandler(async (req, res) => {
         type: updatedOrder.type,
         weight: updatedOrder.weight,
         status: updatedOrder.status,
+        account_num: updatedOrder.account_num,
+        bank: updatedOrder.bank
       });
     } else {
       res.status(404);
@@ -256,7 +262,7 @@ const confirmOrder = asyncHandler(async(req, res) => {
     // Send email to all users with role 'Collector'
     const collectors = await User.find({ role: 'Collector' });
     collectors.forEach((collector) => {
-      sendEmailToCollector(collector.email, _id, address, type, phone, amount, weight, verificationUrl);
+      sendEmailToCollector(collector.email, _id, address, type, phone, amount, weight, account_num, bank, verificationUrl);
     });
 
 })
@@ -271,5 +277,4 @@ module.exports = {
     upgradeOrder,
     updateOrder,
     confirmOrder,
-    // findNearestCollector
 }

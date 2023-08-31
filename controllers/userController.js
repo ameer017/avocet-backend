@@ -18,10 +18,10 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Register User
 const registerUser = asyncHandler(async (req, res) => {
-  const { name, email, password, address, account_Num, bank } = req.body;
+  const { name, email, password, address} = req.body;
 
   // Validation
-  if (!name || !email || !password || !address || !account_Num || !bank) {
+  if (!name || !email || !password || !address) {
     res.status(400);
     throw new Error("Please fill in all the required fields.");
   }
@@ -50,8 +50,6 @@ const registerUser = asyncHandler(async (req, res) => {
     password,
     address,
     userAgent,
-    account_Num,
-    bank
   });
 
   // Generate Token
@@ -67,7 +65,7 @@ const registerUser = asyncHandler(async (req, res) => {
   });
 
   if (user) {
-    const { _id, name, email, phone, photo, role, isVerified, account_Num, bank } = user;
+    const { _id, name, email, phone, photo, role, isVerified } = user;
 
     res.status(201).json({
       _id,
@@ -78,8 +76,6 @@ const registerUser = asyncHandler(async (req, res) => {
       address,
       role,
       isVerified,
-      account_Num,
-      bank,
       token,
     });
   } else {
@@ -90,10 +86,10 @@ const registerUser = asyncHandler(async (req, res) => {
 
 // Register Collector
 const registerCollector = asyncHandler(async (req, res) => {
-  const { name, email, password, address, role, phone, account_Num, bank } = req.body;
+  const { name, email, password, address, role, phone} = req.body;
 
   // Validation
-  if (!name || !email || !password || !address || !role || !phone || !account_Num || !bank) {
+  if (!name || !email || !password || !address || !role || !phone) {
     res.status(400);
     throw new Error("Please fill in all the required fields.");
   }
@@ -129,8 +125,6 @@ const registerCollector = asyncHandler(async (req, res) => {
     role,
     phone,
     userAgent,
-    account_Num, 
-    bank
   });
 
 
@@ -147,7 +141,7 @@ const registerCollector = asyncHandler(async (req, res) => {
   });
 
   if (user) {
-    const { _id, name, email, phone, photo, role, isVerified, account_Num, bank } = user;
+    const { _id, name, email, phone, photo, role, isVerified} = user;
 
     res.status(201).json({
       _id,
@@ -158,8 +152,6 @@ const registerCollector = asyncHandler(async (req, res) => {
       address,
       role,
       isVerified,
-      account_Num, 
-      bank,
       token,
     });
   } else {

@@ -36,6 +36,14 @@ const plasticSchema = mongoose.Schema(
         required: true,
         default: "under processing",
     },
+    account_Num: {
+      type: String,
+      required: [true, "Please add an account Number"],
+    },
+    bank: {
+      type: String,
+      required: [true, "Please add your bank name"],
+    },
     },
     
     {
