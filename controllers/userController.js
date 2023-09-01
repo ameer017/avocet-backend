@@ -276,7 +276,7 @@ const sendLoginCode = asyncHandler(async (req, res) => {
   const subject = "Login Access Code - AVOCET";
   const send_to = email;
   const sent_from = process.env.EMAIL_USER;
-  const reply_to = "noreply@ameer.com";
+  const reply_to = "noreply@avocet.com";
   const template = "loginCode";
   const name = user.name;
   const link = decryptedLoginCode;
@@ -530,7 +530,7 @@ const deleteUser = asyncHandler(async (req, res) => {
     throw new Error("User not found");
   }
 
-  await user.remove();
+  await user.deleteOne();
   res.status(200).json({
     message: "User deleted successfully",
   });

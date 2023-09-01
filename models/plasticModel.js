@@ -38,11 +38,14 @@ const plasticSchema = mongoose.Schema(
     },
     account_Num: {
       type: String,
-      required: [true, "Please add an account Number"],
     },
     bank: {
       type: String,
-      required: [true, "Please add your bank name"],
+    },
+     
+    isConfirmed: {
+      type: Boolean,
+      default: false,
     },
     },
     

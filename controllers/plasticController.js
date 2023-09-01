@@ -4,6 +4,7 @@ const User = require("../models/userModel");
 const { hashToken } = require("../utils");
 const axios = require('axios');
 const sendEmailToCollector = require("../utils/sendEmailToCollector");
+const Token = require("../models/tokenModel");
 
 // create order
 const createOrder = asyncHandler(async (req, res) => {
@@ -62,11 +63,12 @@ const createOrder = asyncHandler(async (req, res) => {
       status, 
       account_num, 
       bank,
-      sellerEmail
+      sellerEmail,
+      
     );
 
     res.status(201).json({
-      type, weight, address, amount, phone, status, sellerEmail
+      type, weight, address, amount, phone, status, sellerEmail, account_num, bank
     });
 
   } else {
@@ -156,7 +158,7 @@ const getOrder = asyncHandler(async (req, res) => {
         status,
         sellerEmail, 
         account_num, 
-        bank
+        bank, 
       });
     } else {
       res.status(404);
@@ -173,7 +175,7 @@ const deleteOrder = asyncHandler(async (req, res) => {
       throw new Error("Order not found");
     }
   
-    await plastic.remove();
+    await plastic.deleteOne();
     res.status(200).json({
       message: "Order deleted successfully",
     });
@@ -216,7 +218,7 @@ const updateOrder = asyncHandler(async (req, res) => {
     const plastic = await Plastic.findOne(req.params.name);
   
     if (plastic) {
-      const { name, type, weight, phone, status, account_num, bank} = plastic;
+      const { name, type, weight, phone, status, account_num, bank, isConfirmed} = plastic;
   
       plastic.type = req.body.type || type;
       plastic.name = req.body.name || name;
@@ -234,7 +236,8 @@ const updateOrder = asyncHandler(async (req, res) => {
         weight: updatedOrder.weight,
         status: updatedOrder.status,
         account_num: updatedOrder.account_num,
-        bank: updatedOrder.bank
+        bank: updatedOrder.bank,
+        isConfirmed: updatedOrder.isConfirmed
       });
     } else {
       res.status(404);
@@ -266,8 +269,6 @@ const confirmOrder = asyncHandler(async(req, res) => {
     });
 
 })
-
-
 
 module.exports = {
     createOrder,
