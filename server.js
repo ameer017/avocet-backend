@@ -20,7 +20,7 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 
 app.use(cors({
-  origin: ["http://localhost:5173", "https://avocet-solutions.netlify.app"],
+  origin: ["http://localhost:5173", "https://avocet-frontend-w9ww.vercel.app/"],
   credentials: true, 
 }));
 
