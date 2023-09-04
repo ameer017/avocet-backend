@@ -29,10 +29,12 @@ const {
   profile,
   fetchCollectors,
 } = require("../controllers/userController");
+const { contactForm } = require("../controllers/contactController");
 
 router.post("/register", registerUser);
 router.post("/registerCollector", registerCollector);
 router.post("/login", loginUser);
+router.post("/contact-form", contactForm);
 router.get("/logout", logoutUser);
 router.get("/getUser", protect, getUser);
 router.patch("/updateUser", protect, updateUser);
