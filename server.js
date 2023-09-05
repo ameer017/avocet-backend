@@ -20,7 +20,7 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 
 app.use(cors({
-  origin: ["http://localhost:5173", "https://avocet-frontend.vercel.app", "https://avocet-solutions.onrender.com"],
+  origin: ["http://localhost:5173", "https://avocet-frontend.vercel.app", "https://avocet-solutions.onrender.com", "smtp-mail.outlook.com", "https://console.cloud.google.com"],
   credentials: true, 
 }));
 
