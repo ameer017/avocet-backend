@@ -51,9 +51,7 @@ const createOrder = asyncHandler(async (req, res) => {
       return res.status(404).json({ message: 'Selected collector not found' });
     }
   
-    try {
-      
-      await sendEmailToCollector(
+    await sendEmailToCollector(
         selectedCollector.email, 
         type,
         weight,
@@ -66,11 +64,7 @@ const createOrder = asyncHandler(async (req, res) => {
         sellerEmail,
         
       );
-      res.status(200).json({message: "order creation sent to the collector"})
-    } catch (error) {
-      res.status(500)
-      throw new Error("Email not sent, Please try again")
-    }
+     
     
     res.status(201).json({
       type, weight, address, amount, phone, status, sellerEmail, account_num, bank
