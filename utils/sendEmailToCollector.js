@@ -45,6 +45,7 @@ const sendEmailToCollector = async (
       await transporter.sendMail(mailOptions);
 
       console.log("Order creation Email sent to the collector");
+      
       resolve();
     } catch (error) {
       console.error("Error sending email to collector:", error);

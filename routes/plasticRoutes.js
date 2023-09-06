@@ -10,6 +10,7 @@ const {
 } = require("../controllers/plasticController");
 
 const { protect, authorOnly } = require("../middleware/authMiddleware");
+const sendEmailToCollector = require("../utils/sendEmailToCollector");
 const router = express.Router();
 
 router.post("/create", protect, createOrder);
@@ -20,6 +21,7 @@ router.patch("/updateOrder", protect, updateOrder);
 
 router.delete("/:id", protect, deleteOrder);
 router.post("/upgradeOrder", protect, authorOnly, upgradeOrder);
+router.post("/sendmailtocollector", protect, sendEmailToCollector)
 
 
 module.exports = router;

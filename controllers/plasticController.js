@@ -28,45 +28,11 @@ const createOrder = asyncHandler(async (req, res) => {
   const plastic = await Plastic.create({
     type, weight, address, amount, phone, sellerEmail, account_num, bank
   })
-  
-
-  const collectors = await User.find({ role: 'Collector' });
-
-  if (!collectors) {
-    return res.status(404).json({ message: 'No collectors found' });
-  }
-
-  // Extract relevant information for each collector
-  const collectorInfo = collectors.map(collector => ({
-    email: collector.email
-  }));
-
-  const selectedCollectorId = req.body.selectedCollectorId;
-
-  const selectedCollector = collectorInfo.find(collector => collector.id === selectedCollectorId);
-
-  if (!selectedCollector) {
-    return res.status(404).json({ message: 'Selected collector not found' });
-  }
 
   if (plastic) {
     const { type, weight, address, amount, phone, sellerEmail, status, account_num, bank } = plastic;
 
-    // Step 3: Send email to the selected collector
-    sendEmailToCollector(
-      selectedCollector.email, 
-      type,
-      weight,
-      address,
-      amount,
-      phone,
-      status, 
-      account_num, 
-      bank,
-      sellerEmail,
-      
-    );
-
+    
     res.status(201).json({
       type, weight, address, amount, phone, status, sellerEmail, account_num, bank
     });
@@ -270,6 +236,50 @@ const confirmOrder = asyncHandler(async(req, res) => {
 
 })
 
+const sendOrderCreationEmail = asyncHandler(async(req, res) => {
+  const collectors = await User.find({ role: 'Collector' });
+
+  if (!collectors) {
+    return res.status(404).json({ message: 'No collectors found' });
+  }
+
+  // Extract relevant information for each collector
+  const collectorInfo = collectors.map(collector => ({
+    email: collector.email
+  }));
+
+  const selectedCollectorId = req.body.selectedCollectorId;
+
+  const selectedCollector = collectorInfo.find(collector => collector.id === selectedCollectorId);
+
+  if (!selectedCollector) {
+    return res.status(404).json({ message: 'Selected collector not found' });
+  }
+
+  try {
+    
+    await sendEmailToCollector(
+      selectedCollector.email, 
+      type,
+      weight,
+      address,
+      amount,
+      phone,
+      status, 
+      account_num, 
+      bank,
+      sellerEmail,
+      
+    );
+    res.status(200).json({message: "order creation sent to the collector"})
+  } catch (error) {
+    req.status(500)
+    throw new Error("Email not sent, Please try again")
+  }
+
+
+})
+
 module.exports = {
     createOrder,
     getOrder,
@@ -278,4 +288,5 @@ module.exports = {
     upgradeOrder,
     updateOrder,
     confirmOrder,
+    sendOrderCreationEmail
 }
