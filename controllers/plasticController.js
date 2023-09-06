@@ -273,7 +273,7 @@ const sendOrderCreationEmail = asyncHandler(async(req, res) => {
     );
     res.status(200).json({message: "order creation sent to the collector"})
   } catch (error) {
-    req.status(500)
+    res.status(500)
     throw new Error("Email not sent, Please try again")
   }
 
