@@ -20,8 +20,16 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 
 app.use(cors({
-  origin: ["http://localhost:5173", "https://avocet-frontend.vercel.app", "https://avocet-solutions.onrender.com", "smtp-mail.outlook.com", "https://console.cloud.google.com"],
-  credentials: true, 
+  origin: [
+    "http://localhost:5173", 
+    "https://avocet-frontend.vercel.app", 
+    "https://avocet-solutions.onrender.com", 
+    "https://outlook.live.com", 
+    "https://console.cloud.google.com",
+    "*"
+],
+  credentials: true,
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', 
 }));
 
 // Routes
