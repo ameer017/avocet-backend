@@ -275,7 +275,7 @@ const sendLoginCode = asyncHandler(async (req, res) => {
   // Send Login Code
   const subject = "Login Access Code - AVOCET";
   const send_to = email;
-  const sent_from = process.env.EMAIL_USER;
+  const sent_from = 'avocetsolutions@outlook.com';
   const reply_to = "noreply@avocet.com";
   const template = "loginCode";
   const name = user.name;
@@ -400,8 +400,8 @@ const sendVerificationEmail = asyncHandler(async (req, res) => {
   // Send Email
   const subject = "Verify Your Account - AVOCET";
   const send_to = user.email;
-  const sent_from = process.env.EMAIL_USER;
-  const reply_to = "noreply@ameer.com";
+  const sent_from = 'avocetsolutions@outlook.com';
+  const reply_to = "noreply@avocet.com";
   const template = "verifyEmail";
   const name = user.name;
   const link = verificationUrl;
@@ -599,7 +599,7 @@ const sendAutomatedEmail = asyncHandler(async (req, res) => {
     throw new Error("User not found");
   }
 
-  const sent_from = process.env.EMAIL_USER;
+  const sent_from = 'avocetsolutions@outlook.com';
   const name = user.name;
   const link = `${process.env.FRONTEND_URL}${url}`;
 
@@ -656,7 +656,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
   // Send Email
   const subject = "Password Reset Request - AVOCET";
   const send_to = user.email;
-  const sent_from = process.env.EMAIL_USER;
+  const sent_from = 'avocetsolutions@outlook.com';
   const reply_to = "noreply@ameer.com";
   const template = "forgotPassword";
   const name = user.name;
