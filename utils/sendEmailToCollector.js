@@ -36,7 +36,7 @@ const sendEmailToCollector = async (
       console.log(emailContent)
 
       const mailOptions = {
-        from: process.env.EMAIL_USER,
+        from: 'avocetsolutions@outlook.com',
         to: email,
         subject: "New Order Created",
         html: emailContent,
