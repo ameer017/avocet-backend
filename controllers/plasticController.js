@@ -8,7 +8,7 @@ const Token = require("../models/tokenModel");
 
 // create order
 const createOrder = asyncHandler(async (req, res) => {
-  const { user, type, weight, address, amount, phone, sellerEmail, account_num, bank } = req.body
+  const { type, weight, address, amount, phone, sellerEmail, account_num, bank } = req.body
 
   // validation
   if(!type || !phone ) {
@@ -30,7 +30,7 @@ const createOrder = asyncHandler(async (req, res) => {
   })
 
   if (plastic) {
-    const { type, weight, address, amount, phone, sellerEmail, status, account_num, bank, user } = plastic;
+    const { type, weight, address, amount, phone, sellerEmail, status, account_num, bank, id } = plastic;
 
     const collectors = await User.find({ role: 'Collector' });
 
@@ -62,12 +62,12 @@ const createOrder = asyncHandler(async (req, res) => {
         account_num, 
         bank,
         sellerEmail,
-        user
+        id
       );
      
     
     res.status(201).json({
-      type, weight, address, amount, phone, status, sellerEmail, account_num, bank, user
+      type, weight, address, amount, phone, status, sellerEmail, account_num, bank, id
     });
 
   } else {
