@@ -42,11 +42,6 @@ const plasticSchema = mongoose.Schema(
     bank: {
       type: String,
     },
-     
-    isConfirmed: {
-      type: Boolean,
-      default: false,
-    },
     },
     
     {

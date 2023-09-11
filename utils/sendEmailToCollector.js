@@ -24,8 +24,7 @@ const sendEmailToCollector = async (
   return new Promise(async (resolve, reject) => {
     try {
       const emailContent = `
-        <h1>Hello from AVOCET</h1>
-        <h1>New Order Created</h1>
+        <h1>An order with id ${user} was created</h1>
         <p>Type: ${type}</p>
         <p>Weight: ${weight} kg</p>
         <p>Address: ${address}</p>
@@ -39,7 +38,7 @@ const sendEmailToCollector = async (
       const mailOptions = {
         from: 'avocetsolutions@outlook.com',
         to: email,
-        subject: "New Order Created",
+        subject: `An AVOCET order ${user}`,
         html: emailContent,
       };
 
