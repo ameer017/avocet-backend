@@ -16,21 +16,15 @@ const createOrder = asyncHandler(async (req, res) => {
     throw new Error("Please, fill in all the required fields")
   }
 
-  // check if order exists
-  const orderExists = await Plastic.findById( user );
-
-  if(orderExists) {
-    res.status(400);
-    throw new Error("Order already exists")
-  }
-
   // create new order
   const plastic = await Plastic.create({
     type, weight, address, amount, phone, sellerEmail, account_num, bank
   })
 
+  const id = plastic._id
+
   if (plastic) {
-    const { type, weight, address, amount, phone, sellerEmail, status, account_num, bank, _id } = plastic;
+    const { type, weight, address, amount, phone, sellerEmail, status, account_num, bank, id} = plastic;
 
     const collectors = await User.find({ role: 'Collector' });
 
@@ -62,12 +56,12 @@ const createOrder = asyncHandler(async (req, res) => {
         account_num, 
         bank,
         sellerEmail,
-        _id
+        id
       );
      
     
     res.status(201).json({
-      type, weight, address, amount, phone, status, sellerEmail, account_num, bank, _id
+      type, weight, address, amount, phone, status, sellerEmail, account_num, bank, id
     });
 
   } else {
@@ -76,68 +70,6 @@ const createOrder = asyncHandler(async (req, res) => {
   }
 
 })
-
-// Helper function to get coordinates from Mapbox
-const getCoordinatesForAddress = async (address) => {
-  try {
-    const accessToken = 'pk.eyJ1IjoiYW1lZXI5OCIsImEiOiJjbGt3ejJ4NWMweDRzM3FyejQ1ZzQ1YXdwIn0.60aKaagj3vdxqW2Q5pqATA';
-
-    const response = await axios.get(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${accessToken}`);
-
-    if (response.data && response.data.features && response.data.features.length > 0) {
-      const [longitude, latitude] = response.data.features[0].center;
-      return { latitude, longitude };
-    } else {
-      throw new Error('No coordinates found for the address.');
-    }
-  } catch (error) {
-    throw new Error('Error getting coordinates for address: ' + error.message);
-  }
-};
-
-
-const findNearestCollector = async (sellerAddress) => {
-  try {
-    // Step 1: Get coordinates of the seller's address using Mapbox
-    const sellerCoordinates = await getCoordinatesForAddress(sellerAddress);
-
-    // Fetch all collectors' addresses and coordinates from the database
-    const collectors = await User.find({ role: 'Collector' });
-
-    // Calculate the distances between the seller and each collector
-    const distances = await Promise.all(collectors.map(async (collector) => {
-      const collectorCoordinates = await getCoordinatesForAddress(collector.address);
-      const distance = calculateDistance(sellerCoordinates, collectorCoordinates);
-      return { collector, distance };
-    }));
-
-    // Sort distances in ascending order to find the nearest collector
-    distances.sort((a, b) => a.distance - b.distance);
-
-    // Return the nearest collector's details including address and email
-    return distances[0].collector;
-  } catch (error) {
-    throw new Error('Error finding nearest collector: ' + error.message);
-  }
-};
-
-
-const calculateDistance = (coord1, coord2) => {
-  const R = 6371; // Earth's radius in km
-  const dLat = degToRad(coord2.latitude - coord1.latitude);
-  const dLon = degToRad(coord2.longitude - coord1.longitude);
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(degToRad(coord1.latitude)) * Math.cos(degToRad(coord2.latitude)) *
-    Math.sin(dLon / 2) * Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  const distance = R * c;
-  return distance;
-};
-
-const degToRad = (degrees) => {
-  return degrees * (Math.PI / 180);
-};
 
 
 // get order

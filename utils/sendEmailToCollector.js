@@ -13,19 +13,19 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendEmailToCollector = async (
-  _id,
   email, 
   type,
   weight,
   address,
   amount,
   phone,
-  status
+  status,
+  id
   ) => {
   return new Promise(async (resolve, reject) => {
     try {
       const emailContent = `
-        <h1>An order with id ${_id} was created</h1>
+        <h1>Hello from Avocet</h1>
         <p>Type: ${type}</p>
         <p>Weight: ${weight} kg</p>
         <p>Address: ${address}</p>
@@ -39,7 +39,7 @@ const sendEmailToCollector = async (
       const mailOptions = {
         from: 'avocetsolutions@outlook.com',
         to: email,
-        subject: `An AVOCET order ${user}`,
+        subject: `An Avocet Order was created`,
         html: emailContent,
       };
 
