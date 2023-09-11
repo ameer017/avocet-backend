@@ -25,7 +25,7 @@ app.use(cors({
     "https://avocet-frontend.vercel.app", 
     "https://avocet-solutions.onrender.com", 
     "https://outlook.live.com", 
-    "https://console.cloud.google.com",
+    "https://accounts.google.com/gsi",
     "*"
 ],
   credentials: true,

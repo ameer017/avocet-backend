@@ -24,6 +24,7 @@ const sendEmailToCollector = async (
   return new Promise(async (resolve, reject) => {
     try {
       const emailContent = `
+        <h1>Hello from AVOCET</h1>
         <h1>New Order Created</h1>
         <p>Type: ${type}</p>
         <p>Weight: ${weight} kg</p>
