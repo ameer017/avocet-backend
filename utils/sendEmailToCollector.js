@@ -13,6 +13,7 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendEmailToCollector = async (
+  user,
   email, 
   type,
   weight,
