@@ -30,7 +30,7 @@ const createOrder = asyncHandler(async (req, res) => {
   })
 
   if (plastic) {
-    const { type, weight, address, amount, phone, sellerEmail, status, account_num, bank, id } = plastic;
+    const { type, weight, address, amount, phone, sellerEmail, status, account_num, bank, _id } = plastic;
 
     const collectors = await User.find({ role: 'Collector' });
 
@@ -62,12 +62,12 @@ const createOrder = asyncHandler(async (req, res) => {
         account_num, 
         bank,
         sellerEmail,
-        id
+        _id
       );
      
     
     res.status(201).json({
-      type, weight, address, amount, phone, status, sellerEmail, account_num, bank, id
+      type, weight, address, amount, phone, status, sellerEmail, account_num, bank, _id
     });
 
   } else {

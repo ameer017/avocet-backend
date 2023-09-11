@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendEmailToCollector = async (
-  id,
+  _id,
   email, 
   type,
   weight,
@@ -25,7 +25,7 @@ const sendEmailToCollector = async (
   return new Promise(async (resolve, reject) => {
     try {
       const emailContent = `
-        <h1>An order with id ${id} was created</h1>
+        <h1>An order with id ${_id} was created</h1>
         <p>Type: ${type}</p>
         <p>Weight: ${weight} kg</p>
         <p>Address: ${address}</p>
