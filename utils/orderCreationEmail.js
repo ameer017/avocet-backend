@@ -15,22 +15,13 @@ const transporter = nodemailer.createTransport({
 const orderCreationEmail = async (
     sellerEmail,
     type,
-    weight,
-    amount,
-    name,
-    address,
-    phone,
-    role
+    weight
   ) => {
   return new Promise(async (resolve, reject) => {
     try {
       const emailContent = `
-        <h1>Hello from Avocet - Your order has been sent to:</h1>
-        <p>Name: ${name}</p>
-        <p>Role: ${role} kg</p>
-        <p>Address: ${address}</p>
-        <p>Amount: # ${amount}</p>
-        <p>Phone: ${phone}</p>
+        <h1>Hello from Avocet - Your order has been sent to the collector:</h1>
+        
       `;
 
       console.log(emailContent)

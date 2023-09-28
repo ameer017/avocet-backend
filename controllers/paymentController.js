@@ -1,5 +1,6 @@
 const axios = require('axios');
 const asyncHandler = require('express-async-handler');
+const Payment = require('../models/paymentModel');
 
 const KORAPAY_SECRET_KEY = 'sk_test_ZCET4wATw3msqjyL9snbP8PAKbSr5auo5EYmfAWn'; 
 
@@ -47,7 +48,46 @@ const requestPayment = asyncHandler(
     .catch(function (error) {
       console.log(error);
     });
+
+    const referenceId = requestData.reference;
+    const narration = requestData.destination.narration;
+    const type = requestData.destination.type;
+
+    const payment = await Payment.create({
+      name, email, amount, bank, account,
+      type, narration, referenceId
+    })
+
+    if(payment) {
+      const {_id, name, email, amount, bank, account, type, narration, referenceId} = payment;
+
+      res.status(201).json({
+        name, email, 
+        amount, bank, account,
+        type, narration, referenceId, _id : payment._id
+      })
+    } else {
+      res.status(400);
+      throw new Error("error!!")
+    }
   } 
 )
 
-module.exports = requestPayment;
+const getPaymentDetails = asyncHandler(async (req, res) => {
+  const payments = await Payment.find().sort('-createdAt')
+    
+
+    if (!payments) {
+        res.status(500);
+        throw new Error("Something went wrong");
+      }
+      res.status(200).json(payments);
+});
+
+
+module.exports = 
+{
+  requestPayment,
+  getPaymentDetails
+
+};
