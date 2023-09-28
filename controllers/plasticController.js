@@ -54,6 +54,7 @@ const createOrder = asyncHandler(async (req, res) => {
       sellerEmail,
       type,
       weight,
+      amount,
       selectedCollector.email,
       selectedCollector.name,
       selectedCollector.address,

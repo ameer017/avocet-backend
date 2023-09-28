@@ -16,6 +16,7 @@ const orderCreationEmail = async (
     sellerEmail,
     type,
     weight,
+    amount,
     name,
     address,
     phone,
