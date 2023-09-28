@@ -5,6 +5,7 @@ const { hashToken } = require("../utils");
 const axios = require('axios');
 const sendEmailToCollector = require("../utils/sendEmailToCollector");
 const Token = require("../models/tokenModel");
+const orderCreationEmail = require("../utils/orderCreationEmail");
 
 // create order
 const createOrder = asyncHandler(async (req, res) => {
@@ -34,7 +35,11 @@ const createOrder = asyncHandler(async (req, res) => {
   
     // Extract relevant information for each collector
     const collectorInfo = collectors.map(collector => ({
-      email: collector.email
+      email: collector.email,
+      name: collector.name,
+      address: collector.address,
+      phone: collector.phone,
+      role: collector.role,
     }));
   
     const selectedCollectorId = req.body.selectedCollectorId;
@@ -44,6 +49,16 @@ const createOrder = asyncHandler(async (req, res) => {
     if (!selectedCollector) {
       return res.status(404).json({ message: 'Selected collector not found' });
     }
+
+    await orderCreationEmail(
+      sellerEmail,
+      type,
+      weight,
+      selectedCollector.email,
+      selectedCollector.name,
+      selectedCollector.address,
+      selectedCollector.phone
+    )
   
     await sendEmailToCollector(
         selectedCollector.email, 
@@ -180,10 +195,10 @@ const updateOrder = asyncHandler(async (req, res) => {
 const confirmOrder = asyncHandler(async(req, res) => {
   const plastic = await Plastic.findById(req.plastic._id)
 
-  const verificationToken = crypto.randomBytes(32).toString('hex') + plastic._id;
+  const confirmationToken = crypto.randomBytes(32).toString('hex') + plastic._id;
 
     // Hash token and save
-    const hashedToken = hashToken(verificationToken);
+    const hashedToken = hashToken(confirmationToken);
     await new Token({
       userId: plastic._id,
       vToken: hashedToken,
@@ -191,12 +206,12 @@ const confirmOrder = asyncHandler(async(req, res) => {
       expiresAt: Date.now() + 60 * (60 * 1000), // 60mins
     }).save();
 
-    const verificationUrl = `${process.env.FRONTEND_URL}/confirmOrder/${verificationToken}`
+    const confirmationUrl = `${process.env.FRONTEND_URL}/confirmOrder/${confirmationToken}`
 
     // Send email to all users with role 'Collector'
     const collectors = await User.find({ role: 'Collector' });
     collectors.forEach((collector) => {
-      sendEmailToCollector(collector.email, _id, address, type, phone, amount, weight, account_num, bank, verificationUrl);
+      sendEmailToCollector(collector.email, _id, address, type, phone, amount, weight, account_num, bank, confirmationUrl);
     });
 
 })

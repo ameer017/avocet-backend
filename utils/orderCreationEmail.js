@@ -12,47 +12,45 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const sendEmailToCollector = async (
-  email, 
-  type,
-  weight,
-  address,
-  amount,
-  phone,
-  status,
-  id
+const orderCreationEmail = async (
+    sellerEmail,
+    type,
+    weight,
+    name,
+    address,
+    phone,
+    role
   ) => {
   return new Promise(async (resolve, reject) => {
     try {
       const emailContent = `
-        <h1>Hello from Avocet - the following order was made by a seller!!</h1>
-        <p>Type: ${type}</p>
-        <p>Weight: ${weight} kg</p>
+        <h1>Hello from Avocet - Your order has been sent to:</h1>
+        <p>Name: ${name}</p>
+        <p>Role: ${role} kg</p>
         <p>Address: ${address}</p>
         <p>Amount: # ${amount}</p>
         <p>Phone: ${phone}</p>
-        <p>Status: ${status}</p>
       `;
 
       console.log(emailContent)
 
       const mailOptions = {
         from: 'avocetsolutions@outlook.com',
-        to: email,
-        subject: `An Avocet Order was created`,
+        to: sellerEmail,
+        subject: `Your Avocet Order ${type} - ${weight}kg was created`,
         html: emailContent,
       };
 
       await transporter.sendMail(mailOptions);
 
-      console.log("Order creation Email sent to the collector");
+      console.log("Order creation Email sent to the seller");
       
       resolve();
     } catch (error) {
-      console.error("Error sending email to collector:", error);
+      console.error("Error sending email to seller:", error);
       reject(error);
     }
   });
 };
 
-module.exports = sendEmailToCollector;
+module.exports = orderCreationEmail;
