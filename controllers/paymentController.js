@@ -10,7 +10,7 @@ const requestPayment = asyncHandler(
 
   async (req, res) => {
   
-    const {name, email, amount, bank, account} = req.body;
+    const {name, email, amount, bank, account, paid} = req.body;
   
     const requestData = {
       reference: `payment-${Date.now()}`,
@@ -55,16 +55,16 @@ const requestPayment = asyncHandler(
 
     const payment = await Payment.create({
       name, email, amount, bank, account,
-      type, narration, referenceId
+      type, narration, referenceId, paid
     })
 
     if(payment) {
-      const {_id, name, email, amount, bank, account, type, narration, referenceId} = payment;
+      const {_id, name, email, amount, bank, account, type, narration, referenceId, paid} = payment;
 
       res.status(201).json({
         name, email, 
         amount, bank, account,
-        type, narration, referenceId, _id : payment._id
+        type, narration, referenceId, _id : payment._id, paid
       })
     } else {
       res.status(400);
@@ -84,10 +84,28 @@ const getPaymentDetails = asyncHandler(async (req, res) => {
       res.status(200).json(payments);
 });
 
+const upgradePayment = asyncHandler( async(req, res) => {
+  const { paid, id} = req.body;
+
+  const payment = await Payment.findById(id);
+
+  if (!payment) {
+    res.status(400);
+    throw new Error("Payment not found");
+  }
+
+  payment.paid = true;
+  await payment.save();
+
+  res.status(200).json({
+    message: `Payment completed`,
+  });
+})
+
 
 module.exports = 
 {
   requestPayment,
-  getPaymentDetails
-
+  getPaymentDetails,
+  upgradePayment
 };

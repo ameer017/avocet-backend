@@ -6,6 +6,7 @@ const axios = require('axios');
 const sendEmailToCollector = require("../utils/sendEmailToCollector");
 const Token = require("../models/tokenModel");
 const orderCreationEmail = require("../utils/orderCreationEmail");
+const sendEmailToAdmin = require("../utils/sendEmailToAdmin");
 
 // create order
 const createOrder = asyncHandler(async (req, res) => {
@@ -87,7 +88,6 @@ const createOrder = asyncHandler(async (req, res) => {
 
 })
 
-
 // get order
 const getOrder = asyncHandler(async (req, res) => {
     const plastic = await Plastic.findOne(req.params.name);
@@ -154,10 +154,32 @@ const upgradeOrder = asyncHandler(async (req, res) => {
   plastic.status = status;
   await plastic.save();
 
-  res.status(200).json({
-    message: `Order updated to ${status} and flagged for payment`,
-  });
+  const admins = await User.find({ role: 'admin' });
+
+  if (!admins || admins.length === 0) {
+    return res.status(404).json({ message: 'No admin found' });
+  }
+
+  // Extract admin email addresses
+  const adminEmails = admins.map((admin) => admin.email);
+
+  try {
+    // Send an email to each admin
+    for (const adminEmail of adminEmails) {
+      await sendEmailToAdmin(adminEmail, status);
+    }
+
+    res.status(200).json({
+      message: `Order updated to ${status} and flagged for payment`,
+    });
+  } catch (error) {
+    console.error('Error sending email:', error);
+    res.status(500).json({
+      message: 'Error updating order and sending emails to admins.',
+    });
+  }
 });
+
 
 
   // Update Order
@@ -165,7 +187,7 @@ const updateOrder = asyncHandler(async (req, res) => {
     const plastic = await Plastic.findOne(req.params.name);
   
     if (plastic) {
-      const { name, type, weight, phone, status, account_num, bank, isConfirmed} = plastic;
+      const { name, type, weight, phone, status, account_num, bank} = plastic;
   
       plastic.type = req.body.type || type;
       plastic.name = req.body.name || name;
@@ -184,7 +206,6 @@ const updateOrder = asyncHandler(async (req, res) => {
         status: updatedOrder.status,
         account_num: updatedOrder.account_num,
         bank: updatedOrder.bank,
-        isConfirmed: updatedOrder.isConfirmed
       });
     } else {
       res.status(404);

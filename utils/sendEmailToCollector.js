@@ -13,14 +13,14 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendEmailToCollector = async (
-  email, 
-  type,
-  weight,
-  address,
-  amount,
-  phone,
-  status,
-  id
+    email, 
+    type,
+    weight,
+    address,
+    amount,
+    phone,
+    status,
+    id
   ) => {
   return new Promise(async (resolve, reject) => {
     try {

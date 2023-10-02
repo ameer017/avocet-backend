@@ -39,6 +39,10 @@ const paymentSchema = mongoose.Schema(
             type: String,
             // required: [true, "Please add a phone Number"],
         },
+        paid: {
+            type: Boolean,
+            default: false
+        }
     },
     
     {
