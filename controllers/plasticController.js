@@ -83,7 +83,7 @@ const createOrder = asyncHandler(async (req, res) => {
 
   } else {
     res.status(400);
-    throw new Error("Invalid order data");
+    throw new Error("Order data is invalid");
   }
 
 })
