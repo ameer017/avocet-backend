@@ -8,7 +8,7 @@ const contactForm = asyncHandler(async(req, res) => {
 
     if(!firstName || !lastName || !email || !message){
         res.status(400)
-        throw new Error("Please fill in all the fields")
+        throw new Error("All fields are required!!")
     }
 
     const form = await Contact.create({
