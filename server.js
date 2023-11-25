@@ -24,8 +24,7 @@ app.use(cors({
     "http://localhost:5173", 
     "https://avocet-frontend.vercel.app", 
     "https://avocet-solutions.onrender.com", 
-    "https://outlook.live.com", 
-    "https://accounts.google.com/gsi",
+    "https://outlook.live.com",
     "*"
 ],
   credentials: true,
