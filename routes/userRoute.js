@@ -61,7 +61,7 @@ router.post("/google/callback", loginWithGoogle);
 router.get("/collectors", fetchCollectors);
 
 router.get("/suggested", protect, getSuggestedUsers);
-router.post("/follow/:id", protect, followUnFollowUser); // Toggle state(follow/unfollow)
+router.post("/follow/:id", protect, followUnFollowUser); // Toggle state(follow/un follow
 
 
 module.exports = router;
