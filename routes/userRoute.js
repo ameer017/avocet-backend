@@ -30,6 +30,7 @@ const {
   profile,
   fetchCollectors,
   getSuggestedUsers,
+  followUnFollowUser,
 } = require("../handlers/userController");
 
 router.post("/register", registerUser);
