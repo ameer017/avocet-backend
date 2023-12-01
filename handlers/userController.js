@@ -893,6 +893,64 @@ const loginWithGoogle = asyncHandler(async (req, res) => {
   }
 });
 
+const fetchCollectors = asyncHandler(async (req, res) => {
+  try {
+    // Find all users with the role of 'Collector'
+    const collectors = await User.find({ role: 'Collector' });
+
+    if (!collectors) {
+      return res.status(404).json({ message: 'No collectors found' });
+    }
+
+    // Extract relevant information for each collector
+    const collectorInfo = collectors.map(collector => ({
+      _id: collector._id,
+      name: collector.name,
+      email: collector.email,
+      address: collector.address,
+      phone: collector.phone,
+    }));
+
+    res.status(200).json(collectorInfo);
+  } catch (error) {
+    console.error('Error fetching collectors:', error);
+    return res.status(500).json({ message: 'Error fetching collectors' });
+  }
+});
+
+const profile = asyncHandler(async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // Find the user by ID
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Calculate the total amount earned by the seller
+    let totalAmountBySeller = 0;
+    if (user.role === 'Seller') {
+      const orders = await Plastic.find({ user: userId, status: 'processed' });
+      totalAmountBySeller = orders.reduce((total, order) => total + order.amount, 0);
+    }
+
+    const userProfile = {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      totalAmountBySeller,
+    };
+
+    return res.status(200).json(userProfile);
+  } catch (error) {
+    console.error('Error fetching user profile:', error);
+    return res.status(500).json({ message: 'Error fetching user profile' });
+  }
+});
+
 module.exports = {
   registerUser,
   registerCollector,
@@ -915,4 +973,6 @@ module.exports = {
   resetPassword,
   changePassword,
   loginWithGoogle,
+  fetchCollectors,
+  profile
 };

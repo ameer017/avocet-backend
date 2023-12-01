@@ -6,8 +6,10 @@ const {
   authorOnly,
 } = require("../middleware/authMiddleware");
 
+const { contactForm } = require("../controllers/contactController");
 const {
   registerUser,
+  registerCollector,
   loginUser,
   logoutUser,
   getUser,
@@ -25,11 +27,9 @@ const {
   sendLoginCode,
   loginWithCode,
   loginWithGoogle,
-  registerCollector,
   profile,
   fetchCollectors,
-} = require("../controllers/userController");
-const { contactForm } = require("../controllers/contactController");
+} = require("../handlers/userController");
 
 router.post("/register", registerUser);
 router.post("/registerCollector", registerCollector);
@@ -56,7 +56,10 @@ router.post("/sendLoginCode/:email", sendLoginCode);
 router.post("/loginWithCode/:email", loginWithCode);
 
 router.post("/google/callback", loginWithGoogle);
-router.get('/collectors', fetchCollectors);
+router.get("/collectors", fetchCollectors);
+
+router.get("/suggested", protectRoute, getSuggestedUsers);
+router.post("/follow/:id", protectRoute, followUnFollowUser); // Toggle state(follow/unfollow)
 
 
 module.exports = router;
