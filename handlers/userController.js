@@ -6,11 +6,11 @@ const jwt = require("jsonwebtoken");
 const sendEmail = require("../utils/sendEmail");
 const Token = require("../models/tokenModel");
 const crypto = require("crypto");
-const Cryptr = require("cryptr");
+const Encrypt = require("cryptr");
 const { OAuth2Client } = require("google-auth-library");
 const User = require("../model/userModel");
 
-const cryptr = new Cryptr(process.env.CRYPTR_KEY);
+const encryption = new Encrypt(process.env.CRYPTR_KEY);
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -163,77 +163,128 @@ const loginUser = asyncHandler(async (req, res) => {
     if (!user || !isPasswordCorrect)
       return res.status(400).json({ error: "Invalid username or password" });
 
+    // Trigger 2FA for unknown UserAgent
+    const ua = parser(req.headers["user-agent"]);
+    const thisUserAgent = ua.ua;
+    console.log(thisUserAgent);
+    const allowedAgent = user.userAgent.includes(thisUserAgent);
 
-      // Trigger 2FA for unknown UserAgent
-  const ua = parser(req.headers["user-agent"]);
-  const thisUserAgent = ua.ua;
-  console.log(thisUserAgent);
-  const allowedAgent = user.userAgent.includes(thisUserAgent);
+    if (!allowedAgent) {
+      // Generate 6 digit code
+      const loginCode = Math.floor(100000 + Math.random() * 900000);
+      console.log(loginCode);
 
-  if (!allowedAgent) {
-    // Generate 6 digit code
-    const loginCode = Math.floor(100000 + Math.random() * 900000);
-    console.log(loginCode);
+      // Encrypt login code before saving to DB
+      const encryptedLoginCode = encryption.encrypt(loginCode.toString());
 
-    // Encrypt login code before saving to DB
-    const encryptedLoginCode = cryptr.encrypt(loginCode.toString());
+      // Delete Token if it exists in DB
+      let userToken = await Token.findOne({ userId: user._id });
+      if (userToken) {
+        await userToken.deleteOne();
+      }
 
-    // Delete Token if it exists in DB
-    let userToken = await Token.findOne({ userId: user._id });
-    if (userToken) {
-      await userToken.deleteOne();
+      // Save Token to DB
+      await new Token({
+        userId: user._id,
+        lToken: encryptedLoginCode,
+        createdAt: Date.now(),
+        expiresAt: Date.now() + 60 * (60 * 1000), // 60mins
+      }).save();
+
+      res.status(400);
+      throw new Error("New browser or device detected");
     }
 
-    // Save Token to DB
-    await new Token({
-      userId: user._id,
-      lToken: encryptedLoginCode,
-      createdAt: Date.now(),
-      expiresAt: Date.now() + 60 * (60 * 1000), // 60mins
-    }).save();
+    // Generate Token
+    const token = generateToken(user._id);
 
-    res.status(400);
-    throw new Error("New browser or device detected");
-  }
+    if (user && isPasswordCorrect) {
+      // Send HTTP-only cookie
+      res.cookie("token", token, {
+        path: "/",
+        httpOnly: true,
+        expires: new Date(Date.now() + 1000 * 86400), // 1 day
+        sameSite: "none",
+        secure: true,
+      });
 
-  // Generate Token
-  const token = generateToken(user._id);
+      const { _id, name, email, phone, address, photo, role, isVerified } =
+        user;
 
-  if (user && isPasswordCorrect) {
-    // Send HTTP-only cookie
-    res.cookie("token", token, {
-      path: "/",
-      httpOnly: true,
-      expires: new Date(Date.now() + 1000 * 86400), // 1 day
-      sameSite: "none",
-      secure: true,
-    });
-
-    const { _id, name, email, phone, address, photo, role, isVerified } = user;
-
-    res.status(200).json({
-      _id,
-      name,
-      email,
-      phone,
-      address,
-      photo,
-      role,
-      isVerified,
-      token,
-    });
-  } else {
-    res.status(500);
-    throw new Error("Something went wrong, please try again");
-  }
-
+      res.status(200).json({
+        _id,
+        name,
+        email,
+        phone,
+        address,
+        photo,
+        role,
+        isVerified,
+        token,
+      });
+    } else {
+      res.status(500);
+      throw new Error("Something went wrong, please try again");
+    }
   } catch (error) {
     res.status(500).json({ error: error.message });
     console.log("Error in loginUser: ", error.message);
   }
 });
 
+// Send Login Code
+const sendLoginCode = asyncHandler(async (req, res) => {
+    const { email } = req.params;
+    const user = await User.findOne({ email });
+  
+    if (!user) {
+      res.status(404);
+      throw new Error("User not found");
+    }
+  
+    // Find Login Code in DB
+    let userToken = await Token.findOne({
+      userId: user._id,
+      expiresAt: { $gt: Date.now() },
+    });
+  
+    if (!userToken) {
+      res.status(404);
+      throw new Error("Invalid or Expired token, please login again");
+    }
+  
+    const loginCode = userToken.lToken;
+    const decryptedLoginCode = encryption.decrypt(loginCode);
+  
+    // Send Login Code
+    const subject = "Login Access Code - AVOCET";
+    const send_to = email;
+    const sent_from = 'avocetsolutions@outlook.com';
+    const reply_to = "noreply@avocet.com";
+    const template = "loginCode";
+    const name = user.name;
+    const link = decryptedLoginCode;
+  
+    try {
+      await sendEmail(
+        subject,
+        send_to,
+        sent_from,
+        reply_to,
+        template,
+        name,
+        link
+      );
+      res.status(200).json({ message: `Access code sent to ${email}` });
+    } catch (error) {
+      res.status(500);
+      throw new Error("Email not sent, please try again");
+    }
+  });
+
 module.exports = {
   registerUser,
   registerCollector,
+  loginUser,
+  sendLoginCode
 };
