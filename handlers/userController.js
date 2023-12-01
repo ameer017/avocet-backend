@@ -491,7 +491,18 @@ const getUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
 
   if (user) {
-    const { _id, name, email, phone, address, photo, role, isVerified, account_Num, bank } = user;
+    const {
+      _id,
+      name,
+      email,
+      phone,
+      address,
+      photo,
+      role,
+      isVerified,
+      account_Num,
+      bank,
+    } = user;
 
     res.status(200).json({
       _id,
@@ -502,8 +513,8 @@ const getUser = asyncHandler(async (req, res) => {
       photo,
       role,
       isVerified,
-      account_Num, 
-      bank
+      account_Num,
+      bank,
     });
   } else {
     res.status(404);
@@ -599,7 +610,7 @@ const getUsers = asyncHandler(async (req, res) => {
 // Get Login Status
 const loginStatus = asyncHandler(async (req, res) => {
   const token = req.cookies.token;
-  
+
   if (!token) {
     return res.json(false);
   }
@@ -649,7 +660,7 @@ const sendAutomatedEmail = asyncHandler(async (req, res) => {
     throw new Error("User not found");
   }
 
-  const sent_from = 'avocetsolutions@outlook.com';
+  const sent_from = "avocetsolutions@outlook.com";
   const name = user.name;
   const link = `${process.env.FRONTEND_URL}${url}`;
 
@@ -706,7 +717,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
   // Send Email
   const subject = "Password Reset Request - AVOCET";
   const send_to = user.email;
-  const sent_from = 'avocetsolutions@outlook.com';
+  const sent_from = "avocetsolutions@outlook.com";
   const reply_to = "noreply@ameer.com";
   const template = "forgotPassword";
   const name = user.name;
@@ -755,7 +766,9 @@ const resetPassword = asyncHandler(async (req, res) => {
   user.password = password;
   await user.save();
 
-  res.status(200).json({ message: "Password Reset Successful, proceed to login" });
+  res
+    .status(200)
+    .json({ message: "Password Reset Successful, proceed to login" });
 });
 
 // Change Password
@@ -790,6 +803,7 @@ const changePassword = asyncHandler(async (req, res) => {
   }
 });
 
+// loginWithGoogle
 const loginWithGoogle = asyncHandler(async (req, res) => {
   const { userToken } = req.body;
   //   console.log(userToken);
@@ -879,8 +893,6 @@ const loginWithGoogle = asyncHandler(async (req, res) => {
   }
 });
 
-
-
 module.exports = {
   registerUser,
   registerCollector,
@@ -894,6 +906,13 @@ module.exports = {
   getUser,
   updateUser,
   getSuggestedUsers,
-  deleteUser
+  deleteUser,
+  getUsers,
+  loginStatus,
+  upgradeUser,
+  sendAutomatedEmail,
+  forgotPassword,
+  resetPassword,
+  changePassword,
+  loginWithGoogle,
 };
-
