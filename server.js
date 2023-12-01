@@ -10,6 +10,8 @@ const paymentRoute = require("./routes/paymentRoute")
 const kycRoute = require("./routes/kycRoute")
 const errorHandler = require("./middleware/errorMiddleware");
 const path = require("path");
+const cloudinary = require("cloudinary").v2;
+
 
 const app = express();
 
@@ -31,6 +33,12 @@ app.use(cors({
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', 
 }));
 
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 // Routes
 app.use("/api/users", userRoute);
 app.use("/api/order", plasticRoutes);
