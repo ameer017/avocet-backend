@@ -29,6 +29,7 @@ const {
   loginWithGoogle,
   profile,
   fetchCollectors,
+  getSuggestedUsers,
 } = require("../handlers/userController");
 
 router.post("/register", registerUser);
