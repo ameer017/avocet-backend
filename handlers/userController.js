@@ -8,7 +8,7 @@ const Token = require("../models/tokenModel");
 const crypto = require("crypto");
 const Encrypt = require("cryptr");
 const { OAuth2Client } = require("google-auth-library");
-const User = require("../model/userModel");
+const UserCollection = require("../model/userModel");
 
 const encryption = new Encrypt(process.env.CRYPTR_KEY);
 
@@ -23,7 +23,7 @@ const registerUser = asyncHandler(async (req, res) => {
       throw new Error("Password must be up to 6 characters.");
     }
 
-    const userExists = await User.findOne({ $or: [{ email }] });
+    const userExists = await UserCollection.findOne({ $or: [{ email }] });
 
     if (userExists) {
       return res.status(400).json({ error: "Email already in use" });
@@ -80,7 +80,7 @@ const registerCollector = asyncHandler(async (req, res) => {
   try {
     const { name, email, password, address, role, phone } = req.body;
 
-    const userExists = await User.findOne({ $or: [{ email }] });
+    const userExists = await UserCollection.findOne({ $or: [{ email }] });
 
     if (userExists) {
       return res
@@ -153,7 +153,7 @@ const loginUser = asyncHandler(async (req, res) => {
   try {
     const { password, email } = req.body;
 
-    const user = await User.findOne({ email });
+    const user = await UserCollection.findOne({ email });
 
     const isPasswordCorrect = await bcrypt.compare(
       password,
@@ -235,7 +235,7 @@ const loginUser = asyncHandler(async (req, res) => {
 // Send Login Code
 const sendLoginCode = asyncHandler(async (req, res) => {
   const { email } = req.params;
-  const user = await User.findOne({ email });
+  const user = await UserCollection.findOne({ email });
 
   if (!user) {
     res.status(404);
@@ -287,7 +287,7 @@ const loginWithCode = asyncHandler(async (req, res) => {
   const { email } = req.params;
   const { loginCode } = req.body;
 
-  const user = await User.findOne({ email });
+  const user = await UserCollection.findOne({ email });
 
   if (!user) {
     res.status(404);
@@ -424,7 +424,7 @@ const verifyUser = asyncHandler(async (req, res) => {
   }
 
   // Find User
-  const user = await User.findOne({ _id: userToken.userId });
+  const user = await UserCollection.findOne({ _id: userToken.userId });
 
   if (user.isVerified) {
     res.status(400);
@@ -653,7 +653,7 @@ const sendAutomatedEmail = asyncHandler(async (req, res) => {
   }
 
   // Get user
-  const user = await User.findOne({ email: send_to });
+  const user = await UserCollection.findOne({ email: send_to });
 
   if (!user) {
     res.status(404);
@@ -685,7 +685,7 @@ const sendAutomatedEmail = asyncHandler(async (req, res) => {
 const forgotPassword = asyncHandler(async (req, res) => {
   const { email } = req.body;
 
-  const user = await User.findOne({ email });
+  const user = await UserCollection.findOne({ email });
 
   if (!user) {
     res.status(404);
@@ -760,7 +760,7 @@ const resetPassword = asyncHandler(async (req, res) => {
   }
 
   // Find User
-  const user = await User.findOne({ _id: userToken.userId });
+  const user = await UserCollection.findOne({ _id: userToken.userId });
 
   // Now Reset password
   user.password = password;
@@ -822,7 +822,7 @@ const loginWithGoogle = asyncHandler(async (req, res) => {
   const userAgent = [ua.ua];
 
   // Check if user exists
-  const user = await User.findOne({ email });
+  const user = await UserCollection.findOne({ email });
 
   if (!user) {
     //   Create new user
