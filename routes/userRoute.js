@@ -58,8 +58,8 @@ router.post("/loginWithCode/:email", loginWithCode);
 router.post("/google/callback", loginWithGoogle);
 router.get("/collectors", fetchCollectors);
 
-router.get("/suggested", protectRoute, getSuggestedUsers);
-router.post("/follow/:id", protectRoute, followUnFollowUser); // Toggle state(follow/unfollow)
+router.get("/suggested", protect, getSuggestedUsers);
+router.post("/follow/:id", protect, followUnFollowUser); // Toggle state(follow/unfollow)
 
 
 module.exports = router;
