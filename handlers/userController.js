@@ -32,7 +32,7 @@ const registerUser = asyncHandler(async (req, res) => {
     const ua = parser(req.headers["user-agent"]);
     const userAgent = [ua.ua];
 
-    const user = await User.create({
+    const user = await UserCollection.create({
       name,
       email,
       password,
@@ -103,7 +103,7 @@ const registerCollector = asyncHandler(async (req, res) => {
     const userAgent = [ua.ua];
 
     //   Create new user
-    const user = await User.create({
+    const user = await UserCollection.create({
       name,
       email,
       password,
@@ -347,7 +347,7 @@ const loginWithCode = asyncHandler(async (req, res) => {
 
 // Send Verification Email
 const sendVerificationEmail = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user._id);
+  const user = await UserCollection.findById(req.user._id);
 
   if (!user) {
     res.status(404);
@@ -457,8 +457,8 @@ const logoutUser = asyncHandler(async (req, res) => {
 const followUnFollowUser = asyncHandler(async (req, res) => {
   try {
     const { id } = req.params;
-    const userToModify = await User.findById(id);
-    const currentUser = await User.findById(req.user._id);
+    const userToModify = await UserCollection.findById(id);
+    const currentUser = await UserCollection.findById(req.user._id);
 
     if (id === req.user._id.toString())
       return res
@@ -472,13 +472,13 @@ const followUnFollowUser = asyncHandler(async (req, res) => {
 
     if (isFollowing) {
       // Un follow user
-      await User.findByIdAndUpdate(id, { $pull: { followers: req.user._id } });
-      await User.findByIdAndUpdate(req.user._id, { $pull: { following: id } });
+      await UserCollection.findByIdAndUpdate(id, { $pull: { followers: req.user._id } });
+      await UserCollection.findByIdAndUpdate(req.user._id, { $pull: { following: id } });
       res.status(200).json({ message: "User un-followed successfully" });
     } else {
       // Follow user
-      await User.findByIdAndUpdate(id, { $push: { followers: req.user._id } });
-      await User.findByIdAndUpdate(req.user._id, { $push: { following: id } });
+      await UserCollection.findByIdAndUpdate(id, { $push: { followers: req.user._id } });
+      await UserCollection.findByIdAndUpdate(req.user._id, { $push: { following: id } });
       res.status(200).json({ message: "User followed successfully" });
     }
   } catch (err) {
@@ -488,7 +488,7 @@ const followUnFollowUser = asyncHandler(async (req, res) => {
 });
 
 const getUser = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user._id);
+  const user = await UserCollection.findById(req.user._id);
 
   if (user) {
     const {
@@ -557,9 +557,9 @@ const getSuggestedUsers = async (req, res) => {
     // exclude the current user from suggested users array and exclude users that current user is already following
     const userId = req.user._id;
 
-    const usersFollowedByYou = await User.findById(userId).select("following");
+    const usersFollowedByYou = await UserCollection.findById(userId).select("following");
 
-    const users = await User.aggregate([
+    const users = await UserCollection.aggregate([
       {
         $match: {
           _id: { $ne: userId },
@@ -584,7 +584,7 @@ const getSuggestedUsers = async (req, res) => {
 
 // Delete User
 const deleteUser = asyncHandler(async (req, res) => {
-  const user = User.findById(req.params.id);
+  const user = UserCollection.findById(req.params.id);
 
   if (!user) {
     res.status(404);
@@ -599,7 +599,7 @@ const deleteUser = asyncHandler(async (req, res) => {
 
 // Get Users
 const getUsers = asyncHandler(async (req, res) => {
-  const users = await User.find().sort("-createdAt").select("-password");
+  const users = await UserCollection.find().sort("-createdAt").select("-password");
   if (!users) {
     res.status(500);
     throw new Error("Something went wrong");
@@ -628,7 +628,7 @@ const loginStatus = asyncHandler(async (req, res) => {
 const upgradeUser = asyncHandler(async (req, res) => {
   const { role, id } = req.body;
 
-  const user = await User.findById(id);
+  const user = await UserCollection.findById(id);
 
   if (!user) {
     res.status(404);
@@ -774,7 +774,7 @@ const resetPassword = asyncHandler(async (req, res) => {
 // Change Password
 const changePassword = asyncHandler(async (req, res) => {
   const { oldPassword, password } = req.body;
-  const user = await User.findById(req.user._id);
+  const user = await UserCollection.findById(req.user._id);
 
   if (!user) {
     res.status(404);
@@ -826,7 +826,7 @@ const loginWithGoogle = asyncHandler(async (req, res) => {
 
   if (!user) {
     //   Create new user
-    const newUser = await User.create({
+    const newUser = await UserCollection.create({
       name,
       email,
       password,
@@ -896,7 +896,7 @@ const loginWithGoogle = asyncHandler(async (req, res) => {
 const fetchCollectors = asyncHandler(async (req, res) => {
   try {
     // Find all users with the role of 'Collector'
-    const collectors = await User.find({ role: 'Collector' });
+    const collectors = await UserCollection.find({ role: 'Collector' });
 
     if (!collectors) {
       return res.status(404).json({ message: 'No collectors found' });
@@ -923,7 +923,7 @@ const profile = asyncHandler(async (req, res) => {
     const userId = req.user.id;
 
     // Find the user by ID
-    const user = await User.findById(userId);
+    const user = await UserCollection.findById(userId);
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
