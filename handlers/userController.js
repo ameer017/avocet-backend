@@ -210,6 +210,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
       const { _id, name, email, phone, address, photo, role, isVerified } =
         user;
+        console.log(user)
 
       res.status(200).json({
         _id,
@@ -450,7 +451,7 @@ const logoutUser = asyncHandler(async (req, res) => {
     return res.status(200).json({ message: "Logout successful" });
   } catch (err) {
     res.status(500).json({ error: err.message });
-    console.log("Error in signupUser: ", err.message);
+    console.log("Error: ", err.message);
   }
 });
 
@@ -499,9 +500,7 @@ const getUser = asyncHandler(async (req, res) => {
       address,
       photo,
       role,
-      isVerified,
-      account_Num,
-      bank,
+      isVerified
     } = user;
 
     res.status(200).json({
@@ -512,9 +511,7 @@ const getUser = asyncHandler(async (req, res) => {
       address,
       photo,
       role,
-      isVerified,
-      account_Num,
-      bank,
+      isVerified
     });
   } else {
     res.status(404);
@@ -598,7 +595,8 @@ const deleteUser = asyncHandler(async (req, res) => {
 });
 
 // Get Users
-const getUsers = asyncHandler(async (req, res) => {
+const getUsers = asyncHandler(
+  async (req, res) => {
   const users = await UserCollection.find().sort("-createdAt").select("-password");
   if (!users) {
     res.status(500);
