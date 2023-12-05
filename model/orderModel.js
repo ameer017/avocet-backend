@@ -9,11 +9,11 @@ const orderSchema = mongoose.Schema(
     },
     type: {
       type: String,
-      required: true
+      required: true,
     },
     weight: {
       type: String,
-      required: true
+      required: true,
     },
     address: {
       type: String,
@@ -23,7 +23,7 @@ const orderSchema = mongoose.Schema(
     },
     phone: {
       type: String,
-      required: true
+      required: true,
     },
     sellerEmail: {
       type: String,
@@ -36,9 +36,9 @@ const orderSchema = mongoose.Schema(
     },
     processedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     isProcessed: {
-        type: Boolean,
-        default: false
-    }
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
