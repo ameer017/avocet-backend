@@ -4,8 +4,8 @@ const sendEmailToCollector = require("../utils/sendEmailToCollector");
 const Token = require("../models/tokenModel");
 const orderCreationEmail = require("../utils/orderCreationEmail");
 const sendEmailToAdmin = require("../utils/sendEmailToAdmin");
-const User = require("../model/userModel");
 const Order = require("../model/orderModel");
+const UserCollection = require("../model/userModel");
 
 const createOrder = asyncHandler(
 
@@ -26,7 +26,8 @@ const createOrder = asyncHandler(
           return res.status(400).json({ error: "All fields are required" });
         }
     
-        const user = await User.findById(createdBy);
+        const user = await UserCollection.findById(createdBy);
+        console.log(user)
         if (!user) {
           return res.status(404).json({ error: "User not found" });
         }
@@ -58,7 +59,7 @@ const createOrder = asyncHandler(
             createdBy
           } = newOrder;
     
-          const collectors = await User.find({ role: "Collector" });
+          const collectors = await UserCollection.find({ role: "Collector" });
     
           if (!collectors) {
             return res.status(404).json({ message: "No collectors found" });
