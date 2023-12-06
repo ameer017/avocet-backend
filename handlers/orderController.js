@@ -46,54 +46,54 @@ const createOrder = asyncHandler(async (req, res) => {
         
       } = newOrder;
 
-      // const collectors = await UserCollection.find({ role: "Collector" });
+      const collectors = await UserCollection.find({ role: "Collector" });
 
-      // if (!collectors) {
-      //   return res.status(404).json({ message: "No collectors found" });
-      // }
+      if (!collectors) {
+        return res.status(404).json({ message: "No collectors found" });
+      }
 
-      // // Extract relevant information for each collector
-      // const collectorInfo = collectors.map((collector) => ({
-      //   email: collector.email,
-      //   name: collector.name,
-      //   address: collector.address,
-      //   phone: collector.phone,
-      //   role: collector.role,
-      // }));
+      // Extract relevant information for each collector
+      const collectorInfo = collectors.map((collector) => ({
+        email: collector.email,
+        name: collector.name,
+        address: collector.address,
+        phone: collector.phone,
+        role: collector.role,
+      }));
 
-      // const selectedCollectorId = req.body.selectedCollectorId;
+      const selectedCollectorId = req.body.selectedCollectorId;
 
-      // const selectedCollector = collectorInfo.find(
-      //   (collector) => collector.id === selectedCollectorId
-      // );
+      const selectedCollector = collectorInfo.find(
+        (collector) => collector.id === selectedCollectorId
+      );
 
-      // if (!selectedCollector) {
-      //   return res
-      //     .status(404)
-      //     .json({ message: "Selected collector not found" });
-      // }
+      if (!selectedCollector) {
+        return res
+          .status(404)
+          .json({ message: "Selected collector not found" });
+      }
 
-      // await orderCreationEmail(
-      //   sellerEmail,
-      //   type,
-      //   weight,
-      //   amount,
-      //   selectedCollector.email,
-      //   selectedCollector.name,
-      //   selectedCollector.address,
-      //   selectedCollector.phone
-      // );
+      await orderCreationEmail(
+        sellerEmail,
+        type,
+        weight,
+        amount,
+        selectedCollector.email,
+        selectedCollector.name,
+        selectedCollector.address,
+        selectedCollector.phone
+      );
 
-      // await sendEmailToCollector(
-      //   selectedCollector.email,
-      //   type,
-      //   weight,
-      //   address,
-      //   amount,
-      //   phone,
-      //   status,
-      //   sellerEmail
-      // );
+      await sendEmailToCollector(
+        selectedCollector.email,
+        type,
+        weight,
+        address,
+        amount,
+        phone,
+        status,
+        sellerEmail
+      );
 
       res.status(201).json({
         type,
