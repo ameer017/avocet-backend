@@ -20,8 +20,10 @@ const orderCreationEmail = async (
   return new Promise(async (resolve, reject) => {
     try {
       const emailContent = `
-        <h1>Hello from Avocet - Your order has been sent to the collector:</h1>
-        
+        <h1>Hello from Avocet</h1>
+        <p>Thank you for your order! 🎉</p>
+        <p>We're excited to confirm that your order has been successfully placed and has been sent to the collector for further processing.</p>
+        <code>Best Regards - AVOCET</code>
       `;
 
       console.log(emailContent)
