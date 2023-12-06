@@ -520,7 +520,7 @@ const getUser = asyncHandler(async (req, res) => {
 });
 
 const updateUser = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user._id);
+  const user = await UserCollection.findById(req.user._id);
 
   if (user) {
     const { name, email, phone, address, photo, role, isVerified } = user;
