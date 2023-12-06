@@ -38,6 +38,14 @@ const orderSchema = mongoose.Schema(
   {
     timestamps: true,
     minimize: false,
+    toJSON: {
+      virtuals: true,
+      transform: function (doc, ret) {
+        ret.id = ret._id; 
+        delete ret._id; // Removing '_id' field from the returned object
+        delete ret.__v; // Optionally remove the '__v' field
+      },
+    },
   }
 );
 
