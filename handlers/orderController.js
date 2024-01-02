@@ -17,6 +17,7 @@ const createOrder = asyncHandler(async (req, res) => {
       phone,
       sellerEmail,
       processedBy,
+      id
     } = req.body;
 
     if (!type || !phone) {
@@ -30,7 +31,8 @@ const createOrder = asyncHandler(async (req, res) => {
       address,
       amount,
       phone,
-      sellerEmail
+      sellerEmail,
+      id
     });
 
     if (newOrder) {
@@ -43,7 +45,7 @@ const createOrder = asyncHandler(async (req, res) => {
         sellerEmail,
         status,
         processedBy,
-        
+        id
       } = newOrder;
 
       const collectors = await UserCollection.find({ role: "Collector" });
@@ -103,7 +105,8 @@ const createOrder = asyncHandler(async (req, res) => {
         phone,
         status,
         sellerEmail,
-        processedBy
+        processedBy,
+        id
       });
     } else {
       res.status(400);
@@ -117,17 +120,23 @@ const createOrder = asyncHandler(async (req, res) => {
 
 const getOrder = asyncHandler(async (req, res) => {
   try {
-    const order = await Order.findById(req.params.id);
+    const orderId = req._id;
+    console.log('Requested Order ID:', orderId); // Log the ID received in the request
+
+    const order = await Order.findById(orderId);
+    console.log('Retrieved Order:', order); // Log the order retrieved from MongoDB
 
     if (!order) {
-      return res.status(404).json({ error: "order not found" });
+      return res.status(404).json({ error: "Order not found" });
     }
 
     res.status(200).json(order);
   } catch (err) {
+    console.error('Error in getOrder:', err); // Log any potential errors
     res.status(500).json({ error: err.message });
   }
 });
+
 
 module.exports = {
   createOrder,
