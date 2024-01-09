@@ -1,39 +1,40 @@
-const createWaste = async(req, res) => {
+const createUser = async(req, res) => {
+    
     res.status(500).json({
         status: "error",
         message: "internal server error",
     })
 }
 
-const getWaste = async(req, res) => {
+const getUser = async(req, res) => {
     res.status(500).json({
         status: "error",
         message: "internal server error",
     })
 }
 
-const getAllWastes = async(req, res) => {
+const getAllUsers = async(req, res) => {
     res.status(500).json({
         status: "error",
         message: "internal server error",
     })
 }
 
-const updateWaste = async(req, res) => {
+const updateUser = async(req, res) => {
     res.status(500).json({
         status: "error",
         message: "internal server error",
     })
 }
 
-const upgradeWaste = async(req, res) => {
+const upgradeUser = async(req, res) => {
     res.status(500).json({
         status: "error",
         message: "internal server error",
     })
 }
 
-const deleteWaste = async(req, res) => {
+const deleteUser = async(req, res) => {
     res.status(500).json({
         status: "error",
         message: "internal server error",
@@ -41,10 +42,10 @@ const deleteWaste = async(req, res) => {
 }
 
 module.exports = {
-    createWaste,
-    getWaste,
-    getAllWastes,
-    updateWaste,
-    upgradeWaste,
-    deleteWaste
+    createUser,
+    getUser,
+    getAllUsers,
+    updateUser,
+    upgradeUser,
+    deleteUser
 }
