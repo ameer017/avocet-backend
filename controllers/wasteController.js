@@ -1,10 +1,26 @@
 const datas = require("../data/nft-simple.json");
+const fs = require('fs')
+const filePath = '../data/nft-simple.json'
 
 const createWaste = async (req, res) => {
-  res.status(500).json({
-    status: "error",
-    message: "internal server error",
-  });
+  const newId = datas[datas.length - 1] + 1;
+  const newWaste = Object.assign({id: newId}, req.body);
+
+  const newData = datas.push(newWaste);
+
+  fs.writeFile(filePath, JSON.stringify(newData), err => {
+    res.status(201).json({
+        status: "success",
+        
+        data: {
+            newWaste
+        }
+    })
+  })
+  //   res.status(500).json({
+  //     status: "error",
+  //     message: "internal server error",
+  //   });
 };
 
 const getWaste = async (req, res) => {
@@ -19,7 +35,7 @@ const getAllWastes = async (req, res) => {
     status: "success",
     result: datas.length,
     data: {
-      datas
+      datas,
     },
   });
 };
