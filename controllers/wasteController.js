@@ -98,10 +98,10 @@ const deleteWaste = async (req, res) => {
       message: null
     },
   });
-  res.status(500).json({
-    status: "error",
-    message: "internal server error",
-  });
+  // res.status(500).json({
+  //   status: "error",
+  //   message: "internal server error",
+  // });
 };
 
 module.exports = {
