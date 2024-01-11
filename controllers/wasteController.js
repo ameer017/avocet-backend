@@ -85,10 +85,23 @@ const upgradeWaste = async (req, res) => {
 };
 
 const deleteWaste = async (req, res) => {
-  res.status(500).json({
-    status: "error",
-    message: "internal server error",
+  if(req.params.id * 1 > datas.length) {
+    return res.status(404).json({
+      status: "fail",
+      message: "Invalid ID",
+    });
+  }
+
+  res.status(204).json({
+    status: "success",
+    data: {
+      message: null
+    },
   });
+  // res.status(500).json({
+  //   status: "error",
+  //   message: "internal server error",
+  // });
 };
 
 module.exports = {
