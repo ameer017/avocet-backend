@@ -56,10 +56,25 @@ const getAllWastes = async (req, res) => {
 };
 
 const updateWaste = async (req, res) => {
-  res.status(500).json({
-    status: "error",
-    message: "internal server error",
+
+  if(req.params.id * 1 > datas.length) {
+    return res.status(404).json({
+      status: "fail",
+      message: "Invalid ID",
+    });
+  }
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      message: 'updating nft'
+    },
   });
+
+  // res.status(500).json({
+  //   status: "error",
+  //   message: "internal server error",
+  // });
 };
 
 const upgradeWaste = async (req, res) => {
