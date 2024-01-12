@@ -2,6 +2,28 @@ const datas = require("../data/nft-simple.json");
 const fs = require("fs");
 const filePath = "../data/nft-simple.json";
 
+const checkId = (req, res, next, value) => {
+  console.log(`ID: ${value}`);
+  if (req.params.id * 1 > datas.length) {
+    return res.status(404).json({
+      status: "fail",
+      message: "Invalid ID",
+    });
+  }
+
+  next();
+};
+
+const checkBody = (req, res, next) => {
+  if(!req.body.name || !req.body.price) {
+    return res.status(400).json({
+      status: "error",
+      message: "Missing name and price"
+    })
+  }
+  next()
+}
+
 const createWaste = async (req, res) => {
   const newId = datas[datas.length - 1] + 1;
   const newWaste = Object.assign({ id: newId }, req.body);
@@ -56,8 +78,7 @@ const getAllWastes = async (req, res) => {
 };
 
 const updateWaste = async (req, res) => {
-
-  if(req.params.id * 1 > datas.length) {
+  if (req.params.id * 1 > datas.length) {
     return res.status(404).json({
       status: "fail",
       message: "Invalid ID",
@@ -67,7 +88,7 @@ const updateWaste = async (req, res) => {
   res.status(200).json({
     status: "success",
     data: {
-      message: 'updating nft'
+      message: "updating nft",
     },
   });
 
@@ -85,18 +106,9 @@ const upgradeWaste = async (req, res) => {
 };
 
 const deleteWaste = async (req, res) => {
-  if(req.params.id * 1 > datas.length) {
-    return res.status(404).json({
-      status: "fail",
-      message: "Invalid ID",
-    });
-  }
-
   res.status(204).json({
     status: "success",
-    data: {
-      message: null
-    },
+    data: null,
   });
   // res.status(500).json({
   //   status: "error",
@@ -111,4 +123,6 @@ module.exports = {
   updateWaste,
   upgradeWaste,
   deleteWaste,
+  checkId,
+  checkBody
 };

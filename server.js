@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const morgan = require("morgan");
@@ -5,7 +6,6 @@ const userRoute = require("./routes/userRoutes");
 const wasteRoute = require("./routes/wasteRoute");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
-
 
 app.use(morgan("combined"));
 
