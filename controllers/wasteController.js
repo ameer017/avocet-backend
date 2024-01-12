@@ -1,6 +1,5 @@
-const datas = require("../data/nft-simple.json");
-const fs = require("fs");
-const filePath = "../data/nft-simple.json";
+const waste = require("../model/wasteModel");
+
 
 const checkId = (req, res, next, value) => {
   console.log(`ID: ${value}`);
@@ -15,35 +14,95 @@ const checkId = (req, res, next, value) => {
 };
 
 const checkBody = (req, res, next) => {
-  if(!req.body.name || !req.body.price) {
+  if (!req.body.name || !req.body.price) {
     return res.status(400).json({
       status: "error",
-      message: "Missing name and price"
-    })
+      message: "Missing name and price",
+    });
   }
-  next()
-}
+  next();
+};
 
 const createWaste = async (req, res) => {
-  const newId = datas[datas.length - 1] + 1;
-  const newWaste = Object.assign({ id: newId }, req.body);
+  const {
+    name,
+    duration,
+    maxGroupSize,
+    difficulty,
+    ratingsAverage,
+    ratingsQuantity,
+    price,
+    summary,
+    description,
+    imageCover,
+    images,
+    createdAt,
+    startDates,
+  } = req.body;
 
-  const newData = datas.push(newWaste);
-  console.log(newData);
+  // Check if user exists
+  const wasteExists = await waste.findOne({ name });
 
-  fs.writeFile(filePath, JSON.stringify(newData), (err) => {
-    res.status(201).json({
-      status: "success",
+  if (wasteExists) {
+    res.status(400);
+    throw new Error("Already exists.");
+  }
 
-      data: {
-        newWaste,
-      },
-    });
+  //   Create new waste
+  const resource = await waste.create({
+    name,
+    duration,
+    maxGroupSize,
+    difficulty,
+    ratingsAverage,
+    ratingsQuantity,
+    price,
+    summary,
+    description,
+    imageCover,
+    images,
+    createdAt,
+    startDates,
   });
-  //   res.status(500).json({
-  //     status: "error",
-  //     message: "internal server error",
-  //   });
+
+  if (resource) {
+    const {
+      _id,
+      name,
+      duration,
+      maxGroupSize,
+      difficulty,
+      ratingsAverage,
+      ratingsQuantity,
+      price,
+      summary,
+      description,
+      imageCover,
+      images,
+      createdAt,
+      startDates,
+    } = resource;
+
+    res.status(201).json({
+      _id,
+      name,
+      duration,
+      maxGroupSize,
+      difficulty,
+      ratingsAverage,
+      ratingsQuantity,
+      price,
+      summary,
+      description,
+      imageCover,
+      images,
+      createdAt,
+      startDates,
+    });
+  } else {
+    res.status(400);
+    throw new Error("Invalid waste data");
+  }
 };
 
 const getWaste = async (req, res) => {
@@ -124,5 +183,5 @@ module.exports = {
   upgradeWaste,
   deleteWaste,
   checkId,
-  checkBody
+  checkBody,
 };
