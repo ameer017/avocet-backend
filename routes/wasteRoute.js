@@ -6,11 +6,15 @@ const {
   getWaste,
   updateWaste,
   deleteWaste,
+  checkId,
+  checkBody,
 } = require("../controllers/wasteController");
 
 const router = express.Router();
 
-router.post("/create-waste", createWaste);
+router.param("id", checkId)
+
+router.post("/create-waste", checkBody,createWaste);
 router.post("/upgrade-waste-data", upgradeWaste);
 router.get("/get-wastes-data", getAllWastes);
 router.get("/get-waste-data/:id", getWaste);
