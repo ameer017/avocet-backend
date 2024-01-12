@@ -6,6 +6,7 @@ const userRoute = require("./routes/userRoutes");
 const wasteRoute = require("./routes/wasteRoute");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
 
 app.use(morgan("combined"));
 
@@ -22,6 +23,12 @@ app.use("/api/users", userRoute);
 app.use("/api/wastes", wasteRoute);
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on ${PORT}...`);
-});
+
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server running on ${PORT}`);
+    });
+  })
+  .catch((err) => console.log(err));
