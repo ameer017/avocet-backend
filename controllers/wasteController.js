@@ -1,4 +1,4 @@
-const waste = require("../model/wasteModel");
+const datas = require("../model/wasteModel");
 
 
 const checkId = (req, res, next, value) => {
@@ -107,7 +107,10 @@ const createWaste = async (req, res) => {
 
 const getWaste = async (req, res) => {
   const id = req.params.id * 1;
-  const singleData = datas.find((el) => el.id === id);
+  const singleData = datas.find({
+    difficulty: "easy",
+    duration: 5
+  });
   if (id > datas.length) {
     return res.status(404).json({
       status: "fail",
