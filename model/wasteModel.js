@@ -46,9 +46,9 @@ const wasteSchema = mongoose.Schema(
     images: {
       type: [String],
     },
-    createdAt : {
-        type: Date,
-        default: Date.now()
+    createdAt: {
+      type: Date,
+      default: Date.now(),
     },
     startDates: [Date],
   },
