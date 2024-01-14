@@ -180,9 +180,9 @@ const getAllWastes = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
-    status: "error",
-    message: "internal server error",
-  });
+      status: "error",
+      message: "internal server error",
+    });
   }
 };
 
@@ -225,6 +225,11 @@ const deleteWaste = async (req, res) => {
   // });
 };
 
+const aliasTopWastes = async (req, res, next) => {
+  (req.query.limit = "5"), (req.query.sort = "-ratingsAverage, price");
+  req.query.fields = "name, price, ratingsAverage, difficulty";
+  next();
+};
 module.exports = {
   createWaste,
   getWaste,
@@ -234,4 +239,5 @@ module.exports = {
   deleteWaste,
   checkId,
   checkBody,
+  aliasTopWastes,
 };

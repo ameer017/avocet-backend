@@ -8,10 +8,12 @@ const {
   deleteWaste,
   checkId,
   checkBody,
+  aliasTopWastes
 } = require("../controllers/wasteController");
 
 const router = express.Router();
 
+router.get("/top-5", aliasTopWastes, getAllWastes)
 router.param("id", checkId)
 
 router.post("/create-waste", checkBody,createWaste);
