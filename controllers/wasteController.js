@@ -143,10 +143,11 @@ const getAllWastes = async (req, res) => {
     // {difficulty: 'easy', duration: {gte: '5'}}
     // {difficulty: 'easy', duration: {'$gte': '5'}}
 
+    // sorting data
     if (req.query.sort) {
       const sortBy = req.query.sort.split(",").join(" ");
       query = query.sort(sortBy);
-    }else {
+    } else {
       query = query.sort("-createdAt");
     }
 
@@ -157,6 +158,19 @@ const getAllWastes = async (req, res) => {
     } else {
       query = query.select("-__v");
     }
+
+    // Pagination functionality
+    const page = req.query.pqge * 1 || 1;
+    const limit = req.query.limit * 1 || 10;
+    const skip = (page - 1) * limit;
+
+    query = query.skip(skip).limit(limit);
+    if (req.query.page) {
+      const newData = await datas.countDocuments();
+      if (skip >= newData) throw new Error("Page not found");
+    }
+    //page=2&limit=3, page = 1, 1 - 10
+
     const allData = await query;
 
     res.status(200).json({
@@ -164,7 +178,12 @@ const getAllWastes = async (req, res) => {
       result: allData.length,
       data: allData,
     });
-  } catch (error) {}
+  } catch (error) {
+    res.status(500).json({
+    status: "error",
+    message: "internal server error",
+  });
+  }
 };
 
 const updateWaste = async (req, res) => {
@@ -173,7 +192,7 @@ const updateWaste = async (req, res) => {
       status: "fail",
       message: "Invalid ID",
     });
-  } 
+  }
 
   res.status(200).json({
     status: "success",
