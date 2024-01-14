@@ -138,7 +138,38 @@ const getAllWastes = async (req, res) => {
     let queryStr = JSON.stringify(queryObj);
     hello = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
 
-    const query = datas.find(JSON.parse(hello));
+    let query = datas.find(JSON.parse(hello));
+    // {difficulty: 'easy', duration: {$gte: 5}}
+    // {difficulty: 'easy', duration: {gte: '5'}}
+    // {difficulty: 'easy', duration: {'$gte': '5'}}
+
+    // sorting data
+    if (req.query.sort) {
+      const sortBy = req.query.sort.split(",").join(" ");
+      query = query.sort(sortBy);
+    } else {
+      query = query.sort("-createdAt");
+    }
+
+    // FIELD METHOD
+    if (req.query.fields) {
+      const field = req.query.fields.split(",").join(" ");
+      query = query.select(field);
+    } else {
+      query = query.select("-__v");
+    }
+
+    // Pagination functionality
+    const page = req.query.pqge * 1 || 1;
+    const limit = req.query.limit * 1 || 10;
+    const skip = (page - 1) * limit;
+
+    query = query.skip(skip).limit(limit);
+    if (req.query.page) {
+      const newData = await datas.countDocuments();
+      if (skip >= newData) throw new Error("Page not found");
+    }
+    //page=2&limit=3, page = 1, 1 - 10
 
     const allData = await query;
 
@@ -147,7 +178,12 @@ const getAllWastes = async (req, res) => {
       result: allData.length,
       data: allData,
     });
-  } catch (error) {}
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: "internal server error",
+    });
+  }
 };
 
 const updateWaste = async (req, res) => {
@@ -189,6 +225,11 @@ const deleteWaste = async (req, res) => {
   // });
 };
 
+const aliasTopWastes = async (req, res, next) => {
+  (req.query.limit = "5"), (req.query.sort = "-ratingsAverage, price");
+  req.query.fields = "name, price, ratingsAverage, difficulty";
+  next();
+};
 module.exports = {
   createWaste,
   getWaste,
@@ -198,4 +239,5 @@ module.exports = {
   deleteWaste,
   checkId,
   checkBody,
+  aliasTopWastes,
 };
