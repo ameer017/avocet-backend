@@ -1,6 +1,5 @@
 const datas = require("../model/wasteModel");
 
-
 const checkId = (req, res, next, value) => {
   console.log(`ID: ${value}`);
   if (req.params.id * 1 > datas.length) {
@@ -109,7 +108,7 @@ const getWaste = async (req, res) => {
   const id = req.params.id * 1;
   const singleData = datas.find({
     difficulty: "easy",
-    duration: 5
+    duration: 5,
   });
   if (id > datas.length) {
     return res.status(404).json({
@@ -130,13 +129,25 @@ const getWaste = async (req, res) => {
 };
 
 const getAllWastes = async (req, res) => {
-  res.status(200).json({
-    status: "success",
-    result: datas.length,
-    data: {
-      datas,
-    },
-  });
+  try {
+    const queryObj = { ...req.query };
+    const excludedFields = ["page", "sort", "limit", "fields"];
+    excludedFields.forEach((el) => delete queryObj[el]);
+
+    // ADVANCED FILTERING QUERY
+    let queryStr = JSON.stringify(queryObj);
+    hello = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+
+    const query = datas.find(JSON.parse(hello));
+
+    const allData = await query;
+
+    res.status(200).json({
+      status: "success",
+      result: allData.length,
+      data: allData,
+    });
+  } catch (error) {}
 };
 
 const updateWaste = async (req, res) => {
