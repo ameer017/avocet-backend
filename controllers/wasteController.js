@@ -138,8 +138,25 @@ const getAllWastes = async (req, res) => {
     let queryStr = JSON.stringify(queryObj);
     hello = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
 
-    const query = datas.find(JSON.parse(hello));
+    let query = datas.find(JSON.parse(hello));
+    // {difficulty: 'easy', duration: {$gte: 5}}
+    // {difficulty: 'easy', duration: {gte: '5'}}
+    // {difficulty: 'easy', duration: {'$gte': '5'}}
 
+    if (req.query.sort) {
+      const sortBy = req.query.sort.split(",").join(" ");
+      query = query.sort(sortBy);
+    }else {
+      query = query.sort("-createdAt");
+    }
+
+    // FIELD METHOD
+    if (req.query.fields) {
+      const field = req.query.fields.split(",").join(" ");
+      query = query.select(field);
+    } else {
+      query = query.select("-__v");
+    }
     const allData = await query;
 
     res.status(200).json({
@@ -156,7 +173,7 @@ const updateWaste = async (req, res) => {
       status: "fail",
       message: "Invalid ID",
     });
-  }
+  } 
 
   res.status(200).json({
     status: "success",
