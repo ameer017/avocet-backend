@@ -1,11 +1,12 @@
 const mongoose = require("mongoose");
-
+const slugify = require("slugify");
 const wasteSchema = mongoose.Schema(
   {
     name: {
       type: String,
       require: [true, "please, provide a name"],
     },
+    slug: String,
     duration: {
       type: String,
       require: [true, "Must provide a duration"],
@@ -49,15 +50,40 @@ const wasteSchema = mongoose.Schema(
     createdAt: {
       type: Date,
       default: Date.now(),
-      select: false
+      select: false,
     },
     startDates: [Date],
+    secretData: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
-    timestamps: true,
-    minimize: false,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   }
 );
+
+wasteSchema.virtual("durationWeeks").get(function () {
+  return this.duration / 7;
+});
+
+// MONGOOSE MIDDLEWARE
+
+// DOCUMENT MIDDLEWARE: runs before .save() or .create()
+wasteSchema.pre("save", function (next) {
+  // console.log(this):
+  this.slug = slugify(this.name, { lower: true });
+  next();
+});
+
+// QUERY MIDDLEWARE
+
+wasteSchema.pre(/^find/, function (next) {
+  this.find({ secretData: { $ne: true } });
+  next();
+});
+
 
 const waste = mongoose.model("Waste", wasteSchema);
 module.exports = waste;
