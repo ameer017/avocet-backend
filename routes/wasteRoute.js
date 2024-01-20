@@ -8,7 +8,7 @@ const {
   deleteWaste,
   checkId,
   checkBody,
-  aliasTopWastes
+  aliasTopWastes,
 } = require("../controllers/wasteController");
 
 const router = express.Router();
