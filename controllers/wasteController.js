@@ -179,54 +179,49 @@ const getAllWastes = async (req, res) => {
 };
 
 const updateWaste = async (req, res) => {
-  const waste = await datas.findById(req.params._id);
+  try {
+    // const waste = await datas.findById(req.params._id);
+    const waste = await datas.findOne({ _id: req.params._id });
 
-  if (waste) {
-    const {
-      _id,
-      name,
-      duration,
-      maxGroupSize,
-      difficulty,
-      ratingsAverage,
-      ratingsQuantity,
-      price,
-      summary,
-      description,
-      imageCover,
-      images,
-      createdAt,
-      startDates,
-    } = waste;
 
-    waste.name = name;
-    waste.duration = req.body.duration || duration;
-    waste.difficulty = req.body.difficulty || difficulty;
-    waste.maxGroupSize = req.body.maxGroupSize || maxGroupSize;
-    waste.ratingsAverage = req.body.ratingsAverage || ratingsAverage;
-    waste.ratingsQuantity = req.body.ratingsQuantity || ratingsQuantity;
-    waste.price = req.body.price || price;
-    waste.summary = req.body.summary || summary;
-    waste.description = req.body.description || description;
-    waste.imageCover = req.body.imageCover || imageCover;
-    waste.images = req.body.images || images;
-    waste.startDates = startDates;
+    if (!waste) {
+      res.status(404).json({ error: "Waste not found" });
+      return;
+    }
+
+    waste.name = req.body.name || waste.name;
+    waste.duration = req.body.duration || waste.duration;
+    waste.difficulty = req.body.difficulty || waste.difficulty;
+    waste.maxGroupSize = req.body.maxGroupSize || waste.maxGroupSize;
+    waste.ratingsAverage = req.body.ratingsAverage || waste.ratingsAverage;
+    waste.ratingsQuantity = req.body.ratingsQuantity || waste.ratingsQuantity;
+    waste.price = req.body.price || waste.price;
+    waste.summary = req.body.summary || waste.summary;
+    waste.description = req.body.description || waste.description;
+    waste.imageCover = req.body.imageCover || waste.imageCover;
+    waste.images = req.body.images || waste.images;
+    waste.startDates = req.body.startDates || waste.startDates;
 
     const updatedWaste = await waste.save();
 
     res.status(200).json({
       _id: updatedWaste._id,
       name: updatedWaste.name,
-      email: updatedWaste.email,
-      phone: updatedWaste.phone,
-      bio: updatedWaste.bio,
-      photo: updatedWaste.photo,
-      role: updatedWaste.role,
-      isVerified: updatedWaste.isVerified,
+      duration: updatedWaste.duration,
+      difficulty: updatedWaste.difficulty,
+      maxGroupSize: updatedWaste.maxGroupSize,
+      ratingsAverage: updatedWaste.ratingsAverage,
+      ratingsQuantity: updatedWaste.ratingsQuantity,
+      price: updatedWaste.price,
+      summary: updatedWaste.summary,
+      description: updatedWaste.description,
+      imageCover: updatedWaste.imageCover,
+      images: updatedWaste.images,
+      startDates: updatedWaste.startDates,
+      createdAt: updatedWaste.createdAt,
     });
-  } else {
-    res.status(404);
-    throw new Error("User not found");
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
