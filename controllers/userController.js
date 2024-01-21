@@ -1,26 +1,15 @@
-const names = require("../data/nft-users.json")
+const names = require("../data/nft-users.json");
+const User = require("../model/userModel");
 
 const createUser = async(req, res) => {
-    const newId = names[names.length - 1] + 1;
-    const newUser = Object.assign({id: newId}, req.body);
+    const newUser = await User.create(req.body);
 
-    const user = names.push(newUser);
-
-    fs.writeFile(filePath, JSON.stringify(user), (err) => {
-        res.status(201).json({
-          status: "success",
-    
-          data: {
-            newUser,
-          },
-        });
-      });
-
-    res.status(500).json({
-        status: "error",
-        message: "internal server error",
+    res.status(210).json({
+      status: "success",
     })
 }
+
+
 
 const getUser = async(req, res) => {
     const id = req.params.id * 1;
