@@ -7,8 +7,9 @@ const {
   collectorOnly,
   sellerOnly,
 } = require("../middleware/authMiddleware");
-const { addPlastik } = require("../controllers/wasteController");
+const { addPlastik, getPlastikById } = require("../controllers/wasteController");
 
-router.post("/create", sellerOnly, addPlastik);
+router.post("/create", protect, sellerOnly, addPlastik);
+router.get("/:plastikId", getPlastikById);
 
 module.exports = router;

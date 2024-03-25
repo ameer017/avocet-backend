@@ -1,5 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const sendEmail = require("../Utils/sendEmail");
+const Plastik = require("../model/wasteModel");
+const nodemailer = require("nodemailer");
 
 const addPlastik = asyncHandler(async (req, res) => {
   const { title, sellerEmail, weight, amount, location } = req.body;
@@ -7,6 +9,11 @@ const addPlastik = asyncHandler(async (req, res) => {
   if (!title || !sellerEmail || !weight || !amount || !location) {
     res.status(400);
     throw new Error("Please provide all required fields.");
+  }
+
+  if (weight < 5) {
+    res.status(400);
+    throw new Error("Weight should not less than 5 KG!!!");
   }
 
   try {
@@ -50,7 +57,29 @@ const addPlastik = asyncHandler(async (req, res) => {
   }
 });
 
-const getPlastik = asyncHandler(async (req, res) => {});
+const getPlastikById = asyncHandler(async (req, res) => {
+  const { plastikId } = req.params;
+
+  try {
+    // Find the Plastik by its ID in the database
+    const plastik = await Plastik.findById(plastikId);
+
+    if (!plastik) {
+      // If the Plastik with the given ID is not found, send a 404 Not Found response
+      res.status(404);
+      throw new Error("Plastik not found.");
+    }
+
+    // If the Plastik is found, send it to the client
+    res.status(200).json(plastik);
+  } catch (error) {
+    // Handle any errors that occur during the database interaction
+    console.error("Error retrieving plastik:", error);
+    res.status(500);
+    throw new Error("Failed to retrieve plastik.");
+  }
+});
+
 const getAllPlastiks = asyncHandler(async (req, res) => {});
 const updatePlastik = asyncHandler(async (req, res) => {});
 const upgradePlastik = asyncHandler(async (req, res) => {});
@@ -58,7 +87,7 @@ const deletePlastik = asyncHandler(async (req, res) => {});
 
 module.exports = {
   addPlastik,
-  getPlastik,
+  getPlastikById,
   getAllPlastiks,
   updatePlastik,
   upgradePlastik,

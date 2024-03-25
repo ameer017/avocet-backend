@@ -6,6 +6,7 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const errorHandler = require("./middleware/errorMiddleware");
 const userRoute = require("./routes/userRoutes")
+const wasteRoute = require("./routes/wasteRoute")
 
 const app = express();
 
@@ -39,6 +40,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/users", userRoute);
+app.use("/api/plastik", wasteRoute);
 
 // Error Handler
 app.use(errorHandler);

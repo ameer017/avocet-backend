@@ -32,8 +32,8 @@ const userSchema = mongoose.Schema(
     role: {
       type: String,
       required: true,
-      default: "user",
-      // subscriber, author, and admin (suspended)
+      default: "seller",
+      // seller, collector, and admin (suspended)
     },
     active: {
       type: Boolean,

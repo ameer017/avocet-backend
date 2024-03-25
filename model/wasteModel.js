@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const wasteSchema = mongoose.Schema({
+const plastikSchema = mongoose.Schema({
   title: {
     type: String,
     require: [true, "please, provide a name"],
@@ -31,5 +31,5 @@ const wasteSchema = mongoose.Schema({
   },
 });
 
-const waste = mongoose.model("Waste", wasteSchema);
-module.exports = waste;
+const Plastik = mongoose.model("Plastik", plastikSchema);
+module.exports = Plastik;
