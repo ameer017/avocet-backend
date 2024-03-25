@@ -4,10 +4,11 @@ const router = express.Router();
 const {
   protect,
   adminOnly,
-  authorOnly,
+  collectorOnly,
+  sellerOnly,
 } = require("../middleware/authMiddleware");
 const { addPlastik } = require("../controllers/wasteController");
 
-router.post("/create", addPlastik);
+router.post("/create", sellerOnly, addPlastik);
 
 module.exports = router;

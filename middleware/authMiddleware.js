@@ -41,12 +41,21 @@ const verifiedOnly = asyncHandler(async (req, res, next) => {
   }
 });
 
-const authorOnly = asyncHandler(async (req, res, next) => {
-  if (req.user.role === "author" || req.user.role === "admin") {
+const collectorOnly = asyncHandler(async (req, res, next) => {
+  if (req.user.role === "collector" || req.user.role === "admin") {
     next();
   } else {
     res.status(401);
-    throw new Error("Not authorized as an author");
+    throw new Error("Not authorized as a collector");
+  }
+});
+
+const sellerOnly = asyncHandler(async (req, res, next) => {
+  if (req.user.role === "seller") {
+    next();
+  } else {
+    res.status(401);
+    throw new Error("Not authorized as a seller");
   }
 });
 
@@ -62,6 +71,7 @@ const adminOnly = asyncHandler(async (req, res, next) => {
 module.exports = {
   protect,
   verifiedOnly,
-  authorOnly,
+  collectorOnly,
   adminOnly,
+  sellerOnly
 };
