@@ -1,29 +1,46 @@
 require("dotenv").config();
 const express = require("express");
-const app = express();
-const morgan = require("morgan");
-const userRoute = require("./routes/userRoutes");
-const wasteRoute = require("./routes/wasteRoute");
-const cookieParser = require("cookie-parser");
-const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const cors = require("cors");
+const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
+const errorHandler = require("./middleware/errorMiddleware");
 
-app.use(morgan("combined"));
+const app = express();
 
+// Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(bodyParser.json());
 
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  next();
+});
+
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3000",
+      "*",
+      "https://cloud.google.com/java/docs/reference/google-auth-library/latest/com.google.auth.oauth2",
+    ],
+    credentials: true,
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  })
+);
+
+// Routes
+
 app.get("/", (req, res) => {
   res.send("Home Page");
 });
 
-app.use("/api/users", userRoute);
-app.use("/api/wastes", wasteRoute);
+// Error Handler
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
-
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
