@@ -25,10 +25,6 @@ const wasteSchema = mongoose.Schema({
     require: [true, "please, provide a price"],
   },
 
-  description: {
-    type: String,
-    trim: true,
-  },
   location: {
     type: String,
     require: true,
