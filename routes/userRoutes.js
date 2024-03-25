@@ -22,9 +22,11 @@ const {
   resetPassword,
   changePassword,
   loginWithGoogle,
+  addCollector,
 } = require("../controllers/userController");
 
 router.post("/register", registerUser);
+router.post("/add-collector", addCollector);
 router.post("/login", loginUser);
 router.get("/logout", logoutUser);
 router.get("/getUser", protect, getUser);

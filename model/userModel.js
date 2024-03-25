@@ -17,6 +17,9 @@ const userSchema = mongoose.Schema(
         "Please enter a valid email",
       ],
     },
+    phone: {
+      type: Number,
+    },
     password: {
       type: String,
       required: [true, "Please add a password"],
@@ -35,7 +38,7 @@ const userSchema = mongoose.Schema(
     active: {
       type: Boolean,
       default: false,
-    }
+    },
   },
   {
     timestamps: true,

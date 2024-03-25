@@ -5,6 +5,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const errorHandler = require("./middleware/errorMiddleware");
+const userRoute = require("./routes/userRoutes")
 
 const app = express();
 
@@ -36,6 +37,8 @@ app.use(
 app.get("/", (req, res) => {
   res.send("Home Page");
 });
+
+app.use("/api/users", userRoute);
 
 // Error Handler
 app.use(errorHandler);
