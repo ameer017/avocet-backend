@@ -30,4 +30,56 @@ const initiatePayment = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { initiatePayment };
+const getSinglePayment = asyncHandler(async (req, res) => {
+  const { paymentId } = req.params;
+
+  try {
+    const payment = await Payment.findById(paymentId);
+
+    if (!payment) {
+      res.status(404);
+      throw new Error("Payment not found");
+    }
+
+    res.status(200).json(payment);
+  } catch (error) {
+    console.error("Error retrieving payment:", error);
+    res.status(500).json({ error: "Failed to retrieve payment" });
+  }
+});
+
+const getAllPayments = asyncHandler(async (req, res) => {
+  try {
+    const payments = await Payment.find();
+    res.status(200).json(payments);
+  } catch (error) {
+    console.error("Error retrieving payments:", error);
+    res.status(500).json({ error: "Failed to retrieve payments" });
+  }
+});
+
+const deletePayment = asyncHandler(async (req, res) => {
+  const { paymentId } = req.params;
+
+  try {
+    const payment = await Payment.findById(paymentId);
+
+    if (!payment) {
+      res.status(404);
+      throw new Error("Payment not found");
+    }
+
+    await payment.remove();
+    res.status(200).json({ message: "Payment deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting payment:", error);
+    res.status(500).json({ error: "Failed to delete payment" });
+  }
+});
+
+module.exports = {
+  initiatePayment,
+  getSinglePayment,
+  getAllPayments,
+  deletePayment,
+};
