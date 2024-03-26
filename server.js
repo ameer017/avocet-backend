@@ -7,6 +7,7 @@ const cookieParser = require("cookie-parser");
 const errorHandler = require("./middleware/errorMiddleware");
 const userRoute = require("./routes/userRoutes")
 const wasteRoute = require("./routes/wasteRoute")
+const paymentRoute = require("./routes/paymentRoute")
 
 const app = express();
 
@@ -26,7 +27,7 @@ app.use(
     origin: [
       "http://localhost:3000",
       "*",
-      "https://cloud.google.com/java/docs/reference/google-auth-library/latest/com.google.auth.oauth2",
+      "https://cloud.google.com/java/docs/reference/google-auth-library/latest/com.google.auth.oauth2", "https://api.korapay.com/merchant/api/v1/transactions/disburse"
     ],
     credentials: true,
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
@@ -41,6 +42,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/users", userRoute);
 app.use("/api/plastik", wasteRoute);
+app.use("/api/payment", paymentRoute);
 
 // Error Handler
 app.use(errorHandler);
