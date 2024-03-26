@@ -5,8 +5,10 @@ const {
   getSinglePayment,
   getAllPayments,
   deletePayment,
-} = require("./controllers/paymentController");
+} = require("../controllers/paymentHandler");
 const { adminOnly, protect } = require("../middleware/authMiddleware");
+
+router.use(protect); 
 
 router.post("/create-payment", adminOnly, getSinglePayment);
 router.get("/:paymentId", protect, getSinglePayment);
