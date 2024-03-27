@@ -22,6 +22,8 @@ const {
   changePassword,
   loginWithGoogle,
   addCollector,
+  getCollector,
+  getAllCollectors,
 } = require("../controllers/userController");
 
 router.use(protect); 
@@ -31,10 +33,12 @@ router.post("/add-collector", addCollector);
 router.post("/login", loginUser);
 router.get("/logout", logoutUser);
 router.get("/getUser", protect, getUser);
+router.get("/getCollector", protect, getCollector);
 router.patch("/updateUser", protect, updateUser);
 
 router.delete("/:id", protect, adminOnly, deleteUser);
 router.get("/getUsers", protect, adminOnly, getUsers);
+router.get("/getCollectors", protect, getAllCollectors);
 router.get("/loginStatus", loginStatus);
 router.post("/upgradeUser", protect, adminOnly, upgradeUser);
 router.post("/sendAutomatedEmail", protect, sendAutomatedEmail);

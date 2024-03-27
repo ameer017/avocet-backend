@@ -397,6 +397,17 @@ const getUsers = asyncHandler(async (req, res) => {
   res.status(200).json(users);
 });
 
+const getAllCollectors = asyncHandler(async (req, res) => {
+  const collectors = await User.find({ role: 'collector' });
+
+  if (collectors) {
+    res.status(200).json(collectors);
+  } else {
+    res.status(404).json({ message: "No collectors found" });
+  }
+});
+
+
 // Get Login Status
 const loginStatus = asyncHandler(async (req, res) => {
   const token = req.cookies.token;
@@ -679,9 +690,11 @@ module.exports = {
   loginUser,
   logoutUser,
   getUser,
+  getCollector,
   updateUser,
   deleteUser,
   getUsers,
+  getAllCollectors,
   loginStatus,
   upgradeUser,
   sendAutomatedEmail,
