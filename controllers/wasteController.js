@@ -80,8 +80,44 @@ const getPlastikById = asyncHandler(async (req, res) => {
   }
 });
 
-const getAllPlastiks = asyncHandler(async (req, res) => {});
-const updatePlastik = asyncHandler(async (req, res) => {});
+const getAllPlastiks = asyncHandler(async (req, res) => {
+  const datas = await Plastik.find().sort("-createdAt").exec();
+  if (!datas) {
+    res.status(500);
+    throw new Error("Something went wrong");
+  }
+  res.status(200).json(datas);
+});
+
+const updatePlastik = asyncHandler(async (req, res) => {
+  const data = await Plastik.findById(req.data._id);
+
+  if (data) {
+    const { title, sellerEmail, weight, amount, location  } = data;
+
+    data.sellerEmail = sellerEmail;
+    data.title = req.body.title || title;
+    data.weight = req.body.weight || weight;
+    data.amount = req.body.amount || amount;
+    data.location = req.body.location || location;
+
+    const updatedData = await data.save();
+
+    res.status(200).json({
+      _id: updatedData._id,
+      title: updatedData.title,
+      sellerEmail: updatedData.sellerEmail,
+      weight: updatedData.weight,
+      bio: updatedData.bio,
+      amount: updatedData.amount,
+      location: updatedData.location,
+      isVerified: updatedData.isVerified,
+    });
+  } else {
+    res.status(404);
+    throw new Error("User not found");
+  }
+});
 const upgradePlastik = asyncHandler(async (req, res) => {});
 const deletePlastik = asyncHandler(async (req, res) => {});
 
