@@ -36,12 +36,11 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error("Email already in use.");
   }
 
-
   //   Create new user
   const user = await User.create({
     name,
     email,
-    password
+    password,
   });
 
   // Generate Token
@@ -57,17 +56,17 @@ const registerUser = asyncHandler(async (req, res) => {
   });
 
   if (user) {
-    const { _id, name, email, phone, bio, photo, role, isVerified } = user;
+    const { _id, name, email, phone, photo, role, active } = user;
 
     res.status(201).json({
       _id,
       name,
       email,
       phone,
-      bio,
+
       photo,
       role,
-      isVerified,
+      active,
       token,
     });
   } else {
@@ -76,7 +75,7 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 });
 
-const addCollector = asyncHandler(async(req, res) => {
+const addCollector = asyncHandler(async (req, res) => {
   const { name, email, password, phone } = req.body;
 
   // Validation
@@ -103,7 +102,7 @@ const addCollector = asyncHandler(async(req, res) => {
     name,
     email,
     password,
-    role: "collector" // Set the role to "collector"
+    role: "collector", // Set the role to "collector"
   });
 
   // Generate Token
@@ -119,25 +118,24 @@ const addCollector = asyncHandler(async(req, res) => {
   });
 
   if (user) {
-    const { _id, name, email, phone, bio, photo, role, isVerified } = user;
+    const { _id, name, email, phone, photo, role, active } = user;
 
     res.status(201).json({
       _id,
       name,
       email,
       phone,
-      bio,
+
       photo,
       role,
-      isVerified,
+      active,
       token,
     });
   } else {
     res.status(400);
     throw new Error("Invalid user data");
   }
-})
-
+});
 
 // Login User
 const loginUser = asyncHandler(async (req, res) => {
@@ -163,8 +161,6 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new Error("Invalid email or password");
   }
 
-  
-
   // Generate Token
   const token = generateToken(user._id);
 
@@ -178,17 +174,17 @@ const loginUser = asyncHandler(async (req, res) => {
       secure: true,
     });
 
-    const { _id, name, email, phone, bio, photo, role, isVerified } = user;
+    const { _id, name, email, phone, photo, role, active } = user;
 
     res.status(200).json({
       _id,
       name,
       email,
       phone,
-      bio,
+
       photo,
       role,
-      isVerified,
+      active,
       token,
     });
   } else {
@@ -196,8 +192,6 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new Error("Something went wrong, please try again");
   }
 });
-
-
 
 // Send Verification Email
 const sendVerificationEmail = asyncHandler(async (req, res) => {
@@ -208,7 +202,7 @@ const sendVerificationEmail = asyncHandler(async (req, res) => {
     throw new Error("User not found");
   }
 
-  if (user.isVerified) {
+  if (user.active) {
     res.status(400);
     throw new Error("User already verified");
   }
@@ -280,13 +274,13 @@ const verifyUser = asyncHandler(async (req, res) => {
   // Find User
   const user = await User.findOne({ _id: userToken.userId });
 
-  if (user.isVerified) {
+  if (user.active) {
     res.status(400);
     throw new Error("User is already verified");
   }
 
   // Now verify user
-  user.isVerified = true;
+  user.active = true;
   await user.save();
 
   res.status(200).json({ message: "Account Verification Successful" });
@@ -308,17 +302,17 @@ const getUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
 
   if (user) {
-    const { _id, name, email, phone, bio, photo, role, isVerified } = user;
+    const { _id, name, email, phone, photo, role, active } = user;
 
     res.status(200).json({
       _id,
       name,
       email,
       phone,
-      bio,
+
       photo,
       role,
-      isVerified,
+      active,
     });
   } else {
     res.status(404);
@@ -326,17 +320,39 @@ const getUser = asyncHandler(async (req, res) => {
   }
 });
 
+
+const getCollector = asyncHandler(async (req, res) => {
+  const collector = await User.findOne({ _id: req.params.id, role: 'collector' });
+
+  if (collector) {
+    const { _id, name, email, phone,  photo, role, active } = collector;
+
+    res.status(200).json({
+      _id,
+      name,
+      email,
+      phone,
+      
+      photo,
+      role,
+      active,
+    });
+  } else {
+    res.status(404).json({ message: "User not found" });
+  }
+});
+
+
 // Update User
 const updateUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
 
   if (user) {
-    const { name, email, phone, bio, photo, role, isVerified } = user;
+    const { name, email, phone, photo, role, active } = user;
 
     user.email = email;
     user.name = req.body.name || name;
     user.phone = req.body.phone || phone;
-    user.bio = req.body.bio || bio;
     user.photo = req.body.photo || photo;
 
     const updatedUser = await user.save();
@@ -346,10 +362,9 @@ const updateUser = asyncHandler(async (req, res) => {
       name: updatedUser.name,
       email: updatedUser.email,
       phone: updatedUser.phone,
-      bio: updatedUser.bio,
       photo: updatedUser.photo,
       role: updatedUser.role,
-      isVerified: updatedUser.isVerified,
+      active: updatedUser.active,
     });
   } else {
     res.status(404);
@@ -597,7 +612,7 @@ const loginWithGoogle = asyncHandler(async (req, res) => {
       email,
       password,
       photo: picture,
-      isVerified: true,
+      active: true,
     });
 
     if (newUser) {
@@ -613,17 +628,17 @@ const loginWithGoogle = asyncHandler(async (req, res) => {
         secure: true,
       });
 
-      const { _id, name, email, phone, bio, photo, role, isVerified } = newUser;
+      const { _id, name, email, phone, photo, role, active } = newUser;
 
       res.status(201).json({
         _id,
         name,
         email,
         phone,
-        bio,
+
         photo,
         role,
-        isVerified,
+        active,
         token,
       });
     }
@@ -642,17 +657,17 @@ const loginWithGoogle = asyncHandler(async (req, res) => {
       secure: true,
     });
 
-    const { _id, name, email, phone, bio, photo, role, isVerified } = user;
+    const { _id, name, email, phone, photo, role, active } = user;
 
     res.status(201).json({
       _id,
       name,
       email,
       phone,
-      bio,
+
       photo,
       role,
-      isVerified,
+      active,
       token,
     });
   }
