@@ -12,7 +12,7 @@ const contactSchema = mongoose.Schema({
       "Please enter a valid email",
     ],
   },
-  description: { type: String, require: true },
+  message: { type: String, require: true },
 });
 
 const Contact = mongoose.model("Contact", contactSchema);
