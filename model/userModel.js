@@ -35,6 +35,10 @@ const userSchema = mongoose.Schema(
       default: "seller",
       // seller, collector, and admin (suspended)
     },
+    assets: {
+      type: [String],
+      default: [],
+    },
     active: {
       type: Boolean,
       default: false,

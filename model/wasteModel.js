@@ -1,6 +1,11 @@
 const mongoose = require("mongoose");
 
 const plastikSchema = mongoose.Schema({
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
   title: {
     type: String,
     require: [true, "please, provide a name"],
@@ -29,6 +34,26 @@ const plastikSchema = mongoose.Schema({
     type: String,
     require: true,
   },
+
+  processedBy: [
+    {
+      userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+      },
+      role: {
+        type: String,
+        required: true,
+      },
+      phone: {
+        type: Number,
+      },
+      name: {
+        type: String,
+      },
+    },
+  ],
 });
 
 const Plastik = mongoose.model("Plastik", plastikSchema);

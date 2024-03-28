@@ -2,11 +2,12 @@ const asyncHandler = require("express-async-handler");
 const sendEmail = require("../Utils/sendEmail");
 const Plastik = require("../model/wasteModel");
 const nodemailer = require("nodemailer");
+const User = require("../model/userModel");
 
 const addPlastik = asyncHandler(async (req, res) => {
-  const { title, sellerEmail, weight, amount, location } = req.body;
+  const { createdBy, title, sellerEmail, weight, amount, location } = req.body;
 
-  if (!title || !sellerEmail || !weight || !amount || !location) {
+  if (!title || !sellerEmail || !weight || !amount || !location || !createdBy) {
     res.status(400);
     throw new Error("Please provide all required fields.");
   }
@@ -16,8 +17,18 @@ const addPlastik = asyncHandler(async (req, res) => {
     throw new Error("Weight should not less than 5 KG!!!");
   }
 
+  const user = await User.findById(postedBy);
+  if (!user) {
+    return res.status(404).json({ error: "User not found" });
+  }
+
+  if (user._id.toString() !== req.user._id.toString()) {
+    return res.status(401).json({ error: "Unauthorized to create post" });
+  }
+
   try {
     const plastik = new Plastik({
+      createdBy,
       title,
       sellerEmail,
       weight,
@@ -93,7 +104,7 @@ const updatePlastik = asyncHandler(async (req, res) => {
   const data = await Plastik.findById(req.data._id);
 
   if (data) {
-    const { title, sellerEmail, weight, amount, location  } = data;
+    const { title, sellerEmail, weight, amount, location } = data;
 
     data.sellerEmail = sellerEmail;
     data.title = req.body.title || title;
