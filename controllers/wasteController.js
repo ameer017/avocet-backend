@@ -23,7 +23,7 @@ const addPlastik = asyncHandler(async (req, res) => {
   }
 
   if (user._id.toString() !== req.user._id.toString()) {
-    return res.status(401).json({ error: "Unauthorized to create post" });
+    return res.status(401).json({ error: "Unauthorized to create order" });
   }
 
   try {
@@ -72,19 +72,15 @@ const getPlastikById = asyncHandler(async (req, res) => {
   const { plastikId } = req.params;
 
   try {
-    // Find the Plastik by its ID in the database
     const plastik = await Plastik.findById(plastikId);
 
     if (!plastik) {
-      // If the Plastik with the given ID is not found, send a 404 Not Found response
       res.status(404);
       throw new Error("Plastik not found.");
     }
 
-    // If the Plastik is found, send it to the client
     res.status(200).json(plastik);
   } catch (error) {
-    // Handle any errors that occur during the database interaction
     console.error("Error retrieving plastik:", error);
     res.status(500);
     throw new Error("Failed to retrieve plastik.");
@@ -104,13 +100,15 @@ const updatePlastik = asyncHandler(async (req, res) => {
   const data = await Plastik.findById(req.data._id);
 
   if (data) {
-    const { title, sellerEmail, weight, amount, location } = data;
+    const { title, sellerEmail, weight, amount, location, status } = data;
 
     data.sellerEmail = sellerEmail;
     data.title = req.body.title || title;
     data.weight = req.body.weight || weight;
     data.amount = req.body.amount || amount;
     data.location = req.body.location || location;
+    data.status = req.body.status || status;
+
 
     const updatedData = await data.save();
 
@@ -122,13 +120,38 @@ const updatePlastik = asyncHandler(async (req, res) => {
       bio: updatedData.bio,
       amount: updatedData.amount,
       location: updatedData.location,
-      isVerified: updatedData.isVerified,
+      status: updatedData.status,
     });
   } else {
     res.status(404);
     throw new Error("User not found");
   }
 });
+
+const processPlastik = asyncHandler(async(req, res) => {
+  try {
+		const plastikId = req.params.id;
+		const userId = req.user._id;
+		const phone = req.user.phone;
+		const name = req.user.name;
+
+		
+
+		const plastik = await Plastik.findById(plastikId);
+		if (!plastik) {
+			return res.status(404).json({ error: "Plastic not found" });
+		}
+
+		const result = { userId, phone, name };
+
+		plastik.processedBy.push(result);
+		await plastik.save();
+
+		res.status(200).json(result);
+	} catch (err) {
+		res.status(500).json({ error: err.message });
+	}
+})
 const upgradePlastik = asyncHandler(async (req, res) => {});
 const deletePlastik = asyncHandler(async (req, res) => {});
 

@@ -35,6 +35,11 @@ const plastikSchema = mongoose.Schema({
     require: true,
   },
 
+  status :    {
+    type: String,
+    default: "Not processed"
+  },
+
   processedBy: [
     {
       userId: {
