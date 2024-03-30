@@ -109,7 +109,6 @@ const updatePlastik = asyncHandler(async (req, res) => {
     data.location = req.body.location || location;
     data.status = req.body.status || status;
 
-
     const updatedData = await data.save();
 
     res.status(200).json({
@@ -128,40 +127,49 @@ const updatePlastik = asyncHandler(async (req, res) => {
   }
 });
 
-const processPlastik = asyncHandler(async(req, res) => {
+const processPlastik = asyncHandler(async (req, res) => {
   try {
-		const plastikId = req.params.id;
-		const userId = req.user._id;
-		const phone = req.user.phone;
-		const name = req.user.name;
+    const plastikId = req.params.id;
+    const userId = req.user._id;
+    const phone = req.user.phone;
+    const name = req.user.name;
     const status = req.body;
 
+    const plastik = await Plastik.findById(plastikId);
+    if (!plastik) {
+      return res.status(404).json({ error: "Plastic not found" });
+    }
 
-		
-
-		const plastik = await Plastik.findById(plastikId);
-		if (!plastik) {
-			return res.status(404).json({ error: "Plastic not found" });
-		}
-
-		const result = { userId, phone, name };
+    const result = { userId, phone, name };
 
     plastik.status = status;
-		plastik.processedBy.push(result);
-		await plastik.save();
+    plastik.processedBy.push(result);
+    await plastik.save();
 
-		res.status(200).json(result);
-	} catch (err) {
-		res.status(500).json({ error: err.message });
-	}
-})
-const deletePlastik = asyncHandler(async (req, res) => {});
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+const deletePlastik = asyncHandler(async (req, res) => {
+  const plastik = Plastik.findById(req.params.id);
+
+  if (!plastik) {
+    res.status(404);
+    throw new Error("plastik not found");
+  }
+
+  await plastik.deleteOne();
+  res.status(200).json({
+    message: "plastik deleted successfully",
+  });
+});
 
 module.exports = {
   addPlastik,
   getPlastikById,
   getAllPlastiks,
   updatePlastik,
-  upgradePlastik,
+  processPlastik,
   deletePlastik,
 };
