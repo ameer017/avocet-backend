@@ -134,6 +134,8 @@ const processPlastik = asyncHandler(async(req, res) => {
 		const userId = req.user._id;
 		const phone = req.user.phone;
 		const name = req.user.name;
+    const status = req.body;
+
 
 		
 
@@ -144,6 +146,7 @@ const processPlastik = asyncHandler(async(req, res) => {
 
 		const result = { userId, phone, name };
 
+    plastik.status = status;
 		plastik.processedBy.push(result);
 		await plastik.save();
 
@@ -152,7 +155,6 @@ const processPlastik = asyncHandler(async(req, res) => {
 		res.status(500).json({ error: err.message });
 	}
 })
-const upgradePlastik = asyncHandler(async (req, res) => {});
 const deletePlastik = asyncHandler(async (req, res) => {});
 
 module.exports = {
