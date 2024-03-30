@@ -1,5 +1,4 @@
 const asyncHandler = require("express-async-handler");
-const sendEmail = require("../Utils/sendEmail");
 const Plastik = require("../model/wasteModel");
 const nodemailer = require("nodemailer");
 const User = require("../model/userModel");
@@ -151,6 +150,7 @@ const processPlastik = asyncHandler(async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
 const deletePlastik = asyncHandler(async (req, res) => {
   const plastik = Plastik.findById(req.params.id);
 

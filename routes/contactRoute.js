@@ -4,3 +4,5 @@ const router = express.Router();
 
 router.post("/reachout", reachOut);
 router.get("/get-messages", getMessages);
+
+module.exports = router
