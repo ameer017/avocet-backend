@@ -26,7 +26,6 @@ const {
   getAllCollectors,
 } = require("../controllers/userController");
 
-router.use(protect); 
 
 router.post("/register", registerUser);
 router.post("/add-collector", addCollector);
