@@ -5,9 +5,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const errorHandler = require("./middleware/errorMiddleware");
-const userRoute = require("./routes/userRoutes");
 const wasteRoute = require("./routes/wasteRoute");
-const paymentRoute = require("./routes/paymentRoute");
 const contactRoute = require("./routes/contactRoute");
 
 const app = express();
@@ -32,7 +30,7 @@ app.use(
       "https://api.korapay.com/merchant/api/v1/transactions/disburse",
     ],
     credentials: true,
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
   })
 );
 
@@ -42,9 +40,7 @@ app.get("/", (req, res) => {
   res.send("Home Page");
 });
 
-app.use("/api/users", userRoute);
 app.use("/api/plastik", wasteRoute);
-app.use("/api/payment", paymentRoute);
 app.use("/api/contacts", contactRoute);
 
 // Error Handler
