@@ -28,6 +28,7 @@ app.use(
       "*",
       "https://cloud.google.com/java/docs/reference/google-auth-library/latest/com.google.auth.oauth2",
       "https://api.korapay.com/merchant/api/v1/transactions/disburse",
+      "https://earthfi.vercel.app/"
     ],
     credentials: true,
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
