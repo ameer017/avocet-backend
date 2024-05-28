@@ -20,9 +20,9 @@ const plastikSchema = mongoose.Schema({
     require: true,
   },
 
-  status: {
+  orderStatus: {
     type: String,
-    default: "Not processed",
+    default: "Created",
   },
 });
 
