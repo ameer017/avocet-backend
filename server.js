@@ -2,10 +2,11 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser")
-const cookieParser = require("cookie-parser")
+const cookieParser = require("cookie-parser");
+const errorCatcher = require("./middleware/errorCatcher");
 
 const app = express()
-const PORT = 3000
+const PORT = process.env.PORT || 3000
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -26,6 +27,7 @@ app.get("/", (req, res) => {
     res.send("Hello Guys! Status to my welcome..")
 })
 
+app.use(errorCatcher())
 app.listen(PORT, () => {
     console.log(`Kingfisher hailing on line ${PORT} `)
 })
